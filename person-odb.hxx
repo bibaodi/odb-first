@@ -15,42 +15,35 @@
 
 #include <odb/pre.hxx>
 
-#include "person.hxx"
+#include "person.h"
 
-#include <memory>
 #include <cstddef>
+#include <memory>
 
-#include <odb/core.hxx>
-#include <odb/traits.hxx>
 #include <odb/callback.hxx>
-#include <odb/wrapper-traits.hxx>
-#include <odb/pointer-traits.hxx>
 #include <odb/container-traits.hxx>
+#include <odb/core.hxx>
 #include <odb/no-op-cache-traits.hxx>
+#include <odb/pointer-traits.hxx>
 #include <odb/result.hxx>
 #include <odb/simple-object-result.hxx>
+#include <odb/traits.hxx>
 #include <odb/view-image.hxx>
 #include <odb/view-result.hxx>
+#include <odb/wrapper-traits.hxx>
 
-#include <odb/details/unused.hxx>
 #include <odb/details/shared-ptr.hxx>
+#include <odb/details/unused.hxx>
 
-namespace odb
-{
-  // person
-  //
-  template <>
-  struct class_traits< ::person >
-  {
-    static const class_kind kind = class_object;
-  };
+namespace odb {
+// person
+//
+template <> struct class_traits<::person> { static const class_kind kind = class_object; };
 
-  template <>
-  class access::object_traits< ::person >
-  {
-    public:
+template <> class access::object_traits<::person> {
+  public:
     typedef ::person object_type;
-    typedef ::person* pointer_type;
+    typedef ::person *pointer_type;
     typedef odb::pointer_traits<pointer_type> pointer_traits;
 
     static const bool polymorphic = false;
@@ -61,208 +54,145 @@ namespace odb
 
     static const bool abstract = false;
 
-    static id_type
-    id (const object_type&);
+    static id_type id(const object_type &);
 
-    typedef
-    no_op_pointer_cache_traits<pointer_type>
-    pointer_cache_traits;
+    typedef no_op_pointer_cache_traits<pointer_type> pointer_cache_traits;
 
-    typedef
-    no_op_reference_cache_traits<object_type>
-    reference_cache_traits;
+    typedef no_op_reference_cache_traits<object_type> reference_cache_traits;
 
-    static void
-    callback (database&, object_type&, callback_event);
+    static void callback(database &, object_type &, callback_event);
 
-    static void
-    callback (database&, const object_type&, callback_event);
-  };
+    static void callback(database &, const object_type &, callback_event);
+};
 
-  // person_stat
-  //
-  template <>
-  struct class_traits< ::person_stat >
-  {
-    static const class_kind kind = class_view;
-  };
+// person_stat
+//
+template <> struct class_traits<::person_stat> { static const class_kind kind = class_view; };
 
-  template <>
-  class access::view_traits< ::person_stat >
-  {
-    public:
+template <> class access::view_traits<::person_stat> {
+  public:
     typedef ::person_stat view_type;
-    typedef ::person_stat* pointer_type;
+    typedef ::person_stat *pointer_type;
 
-    static void
-    callback (database&, view_type&, callback_event);
-  };
-}
+    static void callback(database &, view_type &, callback_event);
+};
+} // namespace odb
 
 #include <odb/details/buffer.hxx>
 
-#include <odb/sqlite/version.hxx>
-#include <odb/sqlite/forward.hxx>
 #include <odb/sqlite/binding.hxx>
-#include <odb/sqlite/sqlite-types.hxx>
+#include <odb/sqlite/forward.hxx>
 #include <odb/sqlite/query.hxx>
+#include <odb/sqlite/sqlite-types.hxx>
+#include <odb/sqlite/version.hxx>
 
-namespace odb
-{
-  // person
-  //
-  template <typename A>
-  struct query_columns< ::person, id_sqlite, A >
-  {
+namespace odb {
+// person
+//
+template <typename A> struct query_columns<::person, id_sqlite, A> {
     // id
     //
-    typedef
-    sqlite::query_column<
-      sqlite::value_traits<
-        long unsigned int,
-        sqlite::id_integer >::query_type,
-      sqlite::id_integer >
-    id_type_;
+    typedef sqlite::query_column<sqlite::value_traits<long unsigned int, sqlite::id_integer>::query_type,
+                                 sqlite::id_integer>
+        id_type_;
 
     static const id_type_ id;
 
     // first
     //
-    typedef
-    sqlite::query_column<
-      sqlite::value_traits<
-        ::std::string,
-        sqlite::id_text >::query_type,
-      sqlite::id_text >
-    first_type_;
+    typedef sqlite::query_column<sqlite::value_traits<::std::string, sqlite::id_text>::query_type, sqlite::id_text>
+        first_type_;
 
     static const first_type_ first;
 
     // last
     //
-    typedef
-    sqlite::query_column<
-      sqlite::value_traits<
-        ::std::string,
-        sqlite::id_text >::query_type,
-      sqlite::id_text >
-    last_type_;
+    typedef sqlite::query_column<sqlite::value_traits<::std::string, sqlite::id_text>::query_type, sqlite::id_text>
+        last_type_;
 
     static const last_type_ last;
 
     // age
     //
-    typedef
-    sqlite::query_column<
-      sqlite::value_traits<
-        short unsigned int,
-        sqlite::id_integer >::query_type,
-      sqlite::id_integer >
-    age_type_;
+    typedef sqlite::query_column<sqlite::value_traits<short unsigned int, sqlite::id_integer>::query_type,
+                                 sqlite::id_integer>
+        age_type_;
 
     static const age_type_ age;
-  };
+};
 
-  template <typename A>
-  const typename query_columns< ::person, id_sqlite, A >::id_type_
-  query_columns< ::person, id_sqlite, A >::
-  id (A::table_name, "\"id\"", 0);
+template <typename A>
+const typename query_columns<::person, id_sqlite, A>::id_type_ query_columns<::person, id_sqlite, A>::id(A::table_name,
+                                                                                                         "\"id\"", 0);
 
-  template <typename A>
-  const typename query_columns< ::person, id_sqlite, A >::first_type_
-  query_columns< ::person, id_sqlite, A >::
-  first (A::table_name, "\"first\"", 0);
+template <typename A>
+const typename query_columns<::person, id_sqlite, A>::first_type_
+    query_columns<::person, id_sqlite, A>::first(A::table_name, "\"first\"", 0);
 
-  template <typename A>
-  const typename query_columns< ::person, id_sqlite, A >::last_type_
-  query_columns< ::person, id_sqlite, A >::
-  last (A::table_name, "\"last\"", 0);
+template <typename A>
+const typename query_columns<::person, id_sqlite, A>::last_type_
+    query_columns<::person, id_sqlite, A>::last(A::table_name, "\"last\"", 0);
 
-  template <typename A>
-  const typename query_columns< ::person, id_sqlite, A >::age_type_
-  query_columns< ::person, id_sqlite, A >::
-  age (A::table_name, "\"age\"", 0);
+template <typename A>
+const typename query_columns<::person, id_sqlite, A>::age_type_
+    query_columns<::person, id_sqlite, A>::age(A::table_name, "\"age\"", 0);
 
-  template <typename A>
-  struct pointer_query_columns< ::person, id_sqlite, A >:
-    query_columns< ::person, id_sqlite, A >
-  {
-  };
+template <typename A> struct pointer_query_columns<::person, id_sqlite, A> : query_columns<::person, id_sqlite, A> {};
 
-  template <>
-  class access::object_traits_impl< ::person, id_sqlite >:
-    public access::object_traits< ::person >
-  {
-    public:
-    struct id_image_type
-    {
-      long long id_value;
-      bool id_null;
+template <> class access::object_traits_impl<::person, id_sqlite> : public access::object_traits<::person> {
+  public:
+    struct id_image_type {
+        long long id_value;
+        bool id_null;
 
-      std::size_t version;
+        std::size_t version;
     };
 
-    struct image_type
-    {
-      // id_
-      //
-      long long id_value;
-      bool id_null;
+    struct image_type {
+        // id_
+        //
+        long long id_value;
+        bool id_null;
 
-      // first_
-      //
-      details::buffer first_value;
-      std::size_t first_size;
-      bool first_null;
+        // first_
+        //
+        details::buffer first_value;
+        std::size_t first_size;
+        bool first_null;
 
-      // last_
-      //
-      details::buffer last_value;
-      std::size_t last_size;
-      bool last_null;
+        // last_
+        //
+        details::buffer last_value;
+        std::size_t last_size;
+        bool last_null;
 
-      // age_
-      //
-      long long age_value;
-      bool age_null;
+        // age_
+        //
+        long long age_value;
+        bool age_null;
 
-      std::size_t version;
+        std::size_t version;
     };
 
     struct extra_statement_cache_type;
 
     using object_traits<object_type>::id;
 
-    static id_type
-    id (const id_image_type&);
+    static id_type id(const id_image_type &);
 
-    static id_type
-    id (const image_type&);
+    static id_type id(const image_type &);
 
-    static bool
-    grow (image_type&,
-          bool*);
+    static bool grow(image_type &, bool *);
 
-    static void
-    bind (sqlite::bind*,
-          image_type&,
-          sqlite::statement_kind);
+    static void bind(sqlite::bind *, image_type &, sqlite::statement_kind);
 
-    static void
-    bind (sqlite::bind*, id_image_type&);
+    static void bind(sqlite::bind *, id_image_type &);
 
-    static bool
-    init (image_type&,
-          const object_type&,
-          sqlite::statement_kind);
+    static bool init(image_type &, const object_type &, sqlite::statement_kind);
 
-    static void
-    init (object_type&,
-          const image_type&,
-          database*);
+    static void init(object_type &, const image_type &, database *);
 
-    static void
-    init (id_image_type&, const id_type&);
+    static void init(id_image_type &, const id_type &);
 
     typedef sqlite::object_statements<object_type> statements_type;
 
@@ -288,75 +218,54 @@ namespace odb
 
     static const char table_name[];
 
-    static void
-    persist (database&, object_type&);
+    static void persist(database &, object_type &);
 
-    static pointer_type
-    find (database&, const id_type&);
+    static pointer_type find(database &, const id_type &);
 
-    static bool
-    find (database&, const id_type&, object_type&);
+    static bool find(database &, const id_type &, object_type &);
 
-    static bool
-    reload (database&, object_type&);
+    static bool reload(database &, object_type &);
 
-    static void
-    update (database&, const object_type&);
+    static void update(database &, const object_type &);
 
-    static void
-    erase (database&, const id_type&);
+    static void erase(database &, const id_type &);
 
-    static void
-    erase (database&, const object_type&);
+    static void erase(database &, const object_type &);
 
-    static result<object_type>
-    query (database&, const query_base_type&);
+    static result<object_type> query(database &, const query_base_type &);
 
-    static unsigned long long
-    erase_query (database&, const query_base_type&);
+    static unsigned long long erase_query(database &, const query_base_type &);
 
-    public:
-    static bool
-    find_ (statements_type&,
-           const id_type*);
+  public:
+    static bool find_(statements_type &, const id_type *);
 
-    static void
-    load_ (statements_type&,
-           object_type&,
-           bool reload);
-  };
+    static void load_(statements_type &, object_type &, bool reload);
+};
 
-  template <>
-  class access::object_traits_impl< ::person, id_common >:
-    public access::object_traits_impl< ::person, id_sqlite >
-  {
-  };
+template <>
+class access::object_traits_impl<::person, id_common> : public access::object_traits_impl<::person, id_sqlite> {};
 
-  // person_stat
-  //
-  template <>
-  class access::view_traits_impl< ::person_stat, id_sqlite >:
-    public access::view_traits< ::person_stat >
-  {
-    public:
-    struct image_type
-    {
-      // count
-      //
-      long long count_value;
-      bool count_null;
+// person_stat
+//
+template <> class access::view_traits_impl<::person_stat, id_sqlite> : public access::view_traits<::person_stat> {
+  public:
+    struct image_type {
+        // count
+        //
+        long long count_value;
+        bool count_null;
 
-      // min_age
-      //
-      long long min_age_value;
-      bool min_age_null;
+        // min_age
+        //
+        long long min_age_value;
+        bool min_age_null;
 
-      // max_age
-      //
-      long long max_age_value;
-      bool max_age_null;
+        // max_age
+        //
+        long long max_age_value;
+        bool max_age_null;
 
-      std::size_t version;
+        std::size_t version;
     };
 
     typedef sqlite::view_statements<view_type> statements_type;
@@ -366,46 +275,29 @@ namespace odb
 
     static const bool versioned = false;
 
-    static bool
-    grow (image_type&,
-          bool*);
+    static bool grow(image_type &, bool *);
 
-    static void
-    bind (sqlite::bind*,
-          image_type&);
+    static void bind(sqlite::bind *, image_type &);
 
-    static void
-    init (view_type&,
-          const image_type&,
-          database*);
+    static void init(view_type &, const image_type &, database *);
 
     static const std::size_t column_count = 3UL;
 
-    static query_base_type
-    query_statement (const query_base_type&);
+    static query_base_type query_statement(const query_base_type &);
 
-    static result<view_type>
-    query (database&, const query_base_type&);
-  };
+    static result<view_type> query(database &, const query_base_type &);
+};
 
-  template <>
-  class access::view_traits_impl< ::person_stat, id_common >:
-    public access::view_traits_impl< ::person_stat, id_sqlite >
-  {
-  };
+template <>
+class access::view_traits_impl<::person_stat, id_common> : public access::view_traits_impl<::person_stat, id_sqlite> {};
 
-  // person
-  //
-  // person_stat
-  //
-  struct access::view_traits_impl< ::person_stat, id_sqlite >::query_columns:
-    odb::pointer_query_columns<
-      ::person,
-      id_sqlite,
-      odb::access::object_traits_impl< ::person, id_sqlite > >
-  {
-  };
-}
+// person
+//
+// person_stat
+//
+struct access::view_traits_impl<::person_stat, id_sqlite>::query_columns
+    : odb::pointer_query_columns<::person, id_sqlite, odb::access::object_traits_impl<::person, id_sqlite>> {};
+} // namespace odb
 
 #include "person-odb.ixx"
 

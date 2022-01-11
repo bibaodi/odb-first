@@ -28,7 +28,6 @@ add_definitions( -DDATABASE_SQLITE)
 
 add_executable(apai ${PROJECT_SOURCES})
 
-
 target_compile_definitions(apai
   PRIVATE $<$<OR:$<CONFIG:Debug>,$<CONFIG:RelWithDebInfo>>:QT_QML_DEBUG>)
 target_link_libraries(apai
