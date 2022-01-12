@@ -7,7 +7,7 @@
 #include <odb/database.hxx>
 #include <odb/transaction.hxx>
 
-#include "database.hxx" // create_database
+#include "database_create.h" // create_database
 
 #include "person-odb.hxx"
 #include "person.h"
