@@ -25,18 +25,20 @@ include(${ODB_USE_FILE})
 
 aux_source_directory(. SRC_LIST)
 file(GLOB HEAD_LIST  *.h)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/models)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/models $ENV{QT_INCLUDE_DIR})
 
 file(GLOB OdbCMake_ODB_HEADERS
         ./models/*.h)
 message(STATUS "debug:" ${OdbCMake_ODB_HEADERS})
+message(STATUS "debug::qt include:" $ENV{QT_INCLUDE_DIR})
 
 odb_compile(OdbCMake_OUTPUTS FILES ${OdbCMake_ODB_HEADERS} DB sqlite
     GENERATE_QUERY GENERATE_SESSION GENERATE_PREPARED GENERATE_SCHEMA
-    SCHEMA_NAME etons
+    SCHEMA_NAME APaI
     STANDARD c++11
-    #PROFILE qt
     X_CPP_OPTION -fPIC
+    PROFILE qt
+    INCLUDE $ENV{QT_INCLUDE_DIR}
     )
 
 set(PROJECT_SOURCES
@@ -49,8 +51,9 @@ set(PROJECT_SOURCES
 add_executable(${TARGET} ${PROJECT_SOURCES})
 
 target_link_libraries(${TARGET}
+        Qt${QT_VERSION_MAJOR}::Core  Qt${QT_VERSION_MAJOR}::Quick
         ${ODB_LIBRARIES}
-        Qt${QT_VERSION_MAJOR}::Core Qt${QT_VERSION_MAJOR}::Quick)
+        sqlite3 )
 
 target_include_directories(${TARGET}
         PRIVATE
