@@ -25,9 +25,11 @@ include(${ODB_USE_FILE})
 
 aux_source_directory(. SRC_LIST)
 file(GLOB HEAD_LIST  *.h)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/models)
 
-set(OdbCMake_ODB_HEADERS
-        person.h)
+file(GLOB OdbCMake_ODB_HEADERS
+        ./models/*.h)
+message(STATUS "debug:" ${OdbCMake_ODB_HEADERS})
 
 odb_compile(OdbCMake_OUTPUTS FILES ${OdbCMake_ODB_HEADERS} DB sqlite
     GENERATE_QUERY GENERATE_SESSION GENERATE_PREPARED GENERATE_SCHEMA
