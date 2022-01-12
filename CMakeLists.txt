@@ -18,25 +18,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
 find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
+find_package(ODB REQUIRED COMPONENTS sqlite OPTIONAL_COMPONENTS )
 
-set(ODB_FILE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
+include(${ODB_USE_FILE})
 
 aux_source_directory(. SRC_LIST)
 file(GLOB HEAD_LIST  *.h)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
-
-find_package(ODB REQUIRED COMPONENTS qt sqlite OPTIONAL_COMPONENTS )
-include(${ODB_USE_FILE})
-
-set(OdbCMake_SOURCES
-        main.cpp
-        database_create.h)
-
 set(OdbCMake_ODB_HEADERS
         person.h)
 
-odb_compile(OdbCMake_SOURCES FILES ${OdbCMake_ODB_HEADERS} DB sqlite
+odb_compile(OdbCMake_OUTPUTS FILES ${OdbCMake_ODB_HEADERS} DB sqlite
     GENERATE_QUERY GENERATE_SESSION GENERATE_PREPARED GENERATE_SCHEMA
     SCHEMA_NAME etons
     STANDARD c++11
@@ -47,7 +40,7 @@ odb_compile(OdbCMake_SOURCES FILES ${OdbCMake_ODB_HEADERS} DB sqlite
 set(PROJECT_SOURCES
         qml.qrc
            ${SRC_LIST} ${HEAD_LIST}
-           ${OdbCMake_SOURCES}
+           ${OdbCMake_OUTPUTS}
            ${OdbCMake_ODB_HEADERS})
 
 
