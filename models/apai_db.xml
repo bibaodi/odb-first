@@ -31,47 +31,66 @@
     <table name="Versions" kind="object">
       <column name="id_version" type="INTEGER" null="false"/>
       <column name="comments" type="TEXT" null="true"/>
-      <primary-key>
+      <primary-key auto="true">
         <column name="id_version"/>
       </primary-key>
     </table>
     <table name="UTPs" kind="object">
-      <column name="id_utp" type="INTEGER" null="false"/>
-      <column name="id_pulse_type" type="INTEGER" null="false"/>
-      <column name="id_probe" type="INTEGER" null="false"/>
-      <column name="id_mode" type="INTEGER" null="false"/>
-      <column name="id_apodization" type="INTEGER" null="false"/>
-      <column name="id_mtp" type="INTEGER" null="false"/>
-      <column name="location" type="INTEGER" null="false"/>
-      <column name="nb_element" type="INTEGER" null="false"/>
-      <column name="freq" type="REAL" null="true"/>
-      <column name="nb_half_cycle" type="INTEGER" null="false"/>
-      <column name="polarity" type="INTEGER" null="false"/>
-      <column name="transmit_lines" type="INTEGER" null="false"/>
-      <column name="composed_mode" type="INTEGER" null="false"/>
-      <column name="duty_cycle" type="INTEGER" null="false"/>
-      <column name="nb_element_max" type="INTEGER" null="false"/>
-      <column name="voltage" type="REAL" null="true"/>
-      <column name="delta" type="INTEGER" null="false"/>
-      <column name="deltaT" type="INTEGER" null="false"/>
-      <column name="manipulated" type="INTEGER" null="false"/>
-      <primary-key>
-        <column name="id_utp"/>
-      </primary-key>
+      <column name="id_utp" type="INTEGER" null="false" default="0"/>
+      <column name="id_pulse_type" type="INTEGER" null="false" default="0"/>
+      <column name="id_probe" type="INTEGER" null="false" default="-1"/>
+      <column name="id_mode" type="INTEGER" null="true" default="0"/>
+      <column name="id_apodization" type="INTEGER" null="false" default="0"/>
+      <column name="id_mtp" type="INTEGER" null="false" default="-1"/>
+      <column name="location" type="INTEGER" null="false" default="0"/>
+      <column name="nb_element" type="INTEGER" null="false" default="0"/>
+      <column name="freq" type="REAL" null="true" default="0" options="NOT NULL"/>
+      <column name="nb_half_cycle" type="INTEGER" null="false" default="0"/>
+      <column name="polarity" type="INTEGER" null="false" default="0"/>
+      <column name="transmit_lines" type="INTEGER" null="false" default="0"/>
+      <column name="composed_mode" type="INTEGER" null="false" default="0"/>
+      <column name="duty_cycle" type="INTEGER" null="false" default="0"/>
+      <column name="nb_element_max" type="INTEGER" null="false" default="0"/>
+      <column name="voltage" type="REAL" null="true" default="0"/>
+      <column name="delta" type="INTEGER" null="false" default="0"/>
+      <column name="deltaT" type="INTEGER" null="false" default="0"/>
+      <column name="manipulated" type="INTEGER" null="false" default="0"/>
+      <index name="utp_id_utp_idx" type="UNIQUE" method="BTREE">
+        <column name="id_utp" options="DESC"/>
+      </index>
+      <index name="utp_pkey_idx" type="UNIQUE" method="BTREE">
+        <column name="location"/>
+        <column name="nb_element"/>
+        <column name="id_probe"/>
+        <column name="id_apodization"/>
+        <column name="freq"/>
+        <column name="nb_half_cycle"/>
+        <column name="polarity"/>
+        <column name="transmit_lines"/>
+        <column name="delta"/>
+        <column name="composed_mode"/>
+        <column name="duty_cycle"/>
+        <column name="nb_element_max"/>
+        <column name="voltage"/>
+        <column name="id_pulse_type"/>
+      </index>
+      <index name="utp_id_mtp_idx" type="UNIQUE" method="BTREE">
+        <column name="id_mtp" options="DESC"/>
+      </index>
     </table>
     <table name="UTPInfos" kind="object">
       <column name="id_utp" type="INTEGER" null="false"/>
-      <column name="framerate_multiplier" type="REAL" null="true"/>
-      <column name="framerate_multiplier_m" type="REAL" null="true"/>
-      <column name="max_voltage" type="REAL" null="true"/>
-      <column name="voltage" type="REAL" null="true"/>
-      <column name="mi" type="REAL" null="true"/>
-      <column name="tib" type="REAL" null="true"/>
-      <column name="tis" type="REAL" null="true"/>
-      <column name="ispta" type="REAL" null="true"/>
-      <column name="valid" type="INTEGER" null="false"/>
+      <column name="framerate_multiplier" type="REAL" null="true" default="0"/>
+      <column name="framerate_multiplier_m" type="REAL" null="true" default="0"/>
+      <column name="max_voltage" type="REAL" null="true" default="0"/>
+      <column name="voltage" type="REAL" null="true" default="0"/>
+      <column name="mi" type="REAL" null="true" default="0"/>
+      <column name="tib" type="REAL" null="true" default="0"/>
+      <column name="tis" type="REAL" null="true" default="0"/>
+      <column name="ispta" type="REAL" null="true" default="0"/>
+      <column name="valid" type="INTEGER" null="false" default="0"/>
       <column name="preset" type="TEXT" null="true"/>
-      <column name="tic" type="REAL" null="true"/>
+      <column name="tic" type="REAL" null="true" default="0"/>
       <column name="settings" type="TEXT" null="true"/>
       <primary-key>
         <column name="id_utp"/>
@@ -79,56 +98,56 @@
     </table>
     <table name="MTPs" kind="object">
       <column name="id_mtp" type="INTEGER" null="false"/>
-      <column name="id_utp" type="INTEGER" null="false"/>
-      <column name="T" type="INTEGER" null="false"/>
-      <column name="mi" type="REAL" null="true"/>
-      <column name="mi_inv" type="REAL" null="true"/>
-      <column name="pii_0_u" type="REAL" null="true"/>
-      <column name="pii_3_u" type="REAL" null="true"/>
-      <column name="pii_0_s" type="REAL" null="true"/>
-      <column name="pii_3_s" type="REAL" null="true"/>
-      <column name="pii_3_inv_u" type="REAL" null="true"/>
-      <column name="pii_3_inv_s" type="REAL" null="true"/>
-      <column name="w0" type="REAL" null="true"/>
-      <column name="tisas_u" type="REAL" null="true"/>
-      <column name="tisas_s_factor" type="REAL" null="true"/>
-      <column name="tisbs_u" type="REAL" null="true"/>
-      <column name="tibbs_u" type="REAL" null="true"/>
-      <column name="ticas_u" type="REAL" null="true"/>
-      <column name="ticas_s_factor" type="REAL" null="true"/>
-      <column name="td_u" type="REAL" null="true"/>
-      <column name="td_s" type="REAL" null="true"/>
-      <column name="ec_hv" type="REAL" null="true"/>
-      <column name="pd" type="REAL" null="true"/>
-      <column name="pr" type="REAL" null="true"/>
-      <column name="pc" type="REAL" null="true"/>
-      <column name="isppa" type="REAL" null="true"/>
-      <column name="ispta" type="REAL" null="true"/>
-      <column name="fc3" type="REAL" null="true"/>
-      <column name="fc6" type="REAL" null="true"/>
-      <column name="pr3" type="REAL" null="true"/>
-      <column name="tisbs_s" type="REAL" null="true"/>
-      <column name="tibbs_s" type="REAL" null="true"/>
-      <column name="w0_s" type="REAL" null="true"/>
-      <column name="z0" type="REAL" null="true"/>
-      <column name="z3" type="REAL" null="true"/>
-      <column name="sigma" type="REAL" null="true"/>
-      <column name="delta" type="REAL" null="true"/>
-      <column name="ispta_s" type="REAL" null="true"/>
-      <column name="ipa3_mi" type="REAL" null="true"/>
-      <column name="ispta3_s" type="REAL" null="true"/>
-      <column name="FL_Azim" type="REAL" null="true"/>
-      <column name="FL_Elev" type="REAL" null="true"/>
-      <column name="AaptAzim" type="REAL" null="true"/>
-      <column name="deq4MI" type="REAL" null="true"/>
-      <column name="deq4TIB" type="REAL" null="true"/>
-      <column name="zB3" type="REAL" null="true"/>
-      <column name="w01_mW" type="REAL" null="true"/>
-      <column name="zBP_cm" type="REAL" null="true"/>
-      <column name="z1_cm" type="REAL" null="true"/>
-      <column name="minW3ITA3_mW" type="REAL" null="true"/>
-      <column name="ticas_s" type="REAL" null="true"/>
-      <column name="tisas_s" type="REAL" null="true"/>
+      <column name="id_utp" type="INTEGER" null="false" default="0"/>
+      <column name="T" type="INTEGER" null="false" default="0"/>
+      <column name="mi" type="REAL" null="true" default="0"/>
+      <column name="mi_inv" type="REAL" null="true" default="0"/>
+      <column name="pii_0_u" type="REAL" null="true" default="0"/>
+      <column name="pii_3_u" type="REAL" null="true" default="0"/>
+      <column name="pii_0_s" type="REAL" null="true" default="0"/>
+      <column name="pii_3_s" type="REAL" null="true" default="0"/>
+      <column name="pii_3_inv_u" type="REAL" null="true" default="0"/>
+      <column name="pii_3_inv_s" type="REAL" null="true" default="0"/>
+      <column name="w0" type="REAL" null="true" default="0"/>
+      <column name="tisas_u" type="REAL" null="true" default="0"/>
+      <column name="tisas_s_factor" type="REAL" null="true" default="0"/>
+      <column name="tisbs_u" type="REAL" null="true" default="0"/>
+      <column name="tibbs_u" type="REAL" null="true" default="0"/>
+      <column name="ticas_u" type="REAL" null="true" default="0"/>
+      <column name="ticas_s_factor" type="REAL" null="true" default="0"/>
+      <column name="td_u" type="REAL" null="true" default="0"/>
+      <column name="td_s" type="REAL" null="true" default="0"/>
+      <column name="ec_hv" type="REAL" null="true" default="0"/>
+      <column name="pd" type="REAL" null="true" default="0"/>
+      <column name="pr" type="REAL" null="true" default="0"/>
+      <column name="pc" type="REAL" null="true" default="0"/>
+      <column name="isppa" type="REAL" null="true" default="0"/>
+      <column name="ispta" type="REAL" null="true" default="0"/>
+      <column name="fc3" type="REAL" null="true" default="0"/>
+      <column name="fc6" type="REAL" null="true" default="0"/>
+      <column name="pr3" type="REAL" null="true" default="0"/>
+      <column name="tisbs_s" type="REAL" null="true" default="0"/>
+      <column name="tibbs_s" type="REAL" null="true" default="0"/>
+      <column name="w0_s" type="REAL" null="true" default="0"/>
+      <column name="z0" type="REAL" null="true" default="0"/>
+      <column name="z3" type="REAL" null="true" default="0"/>
+      <column name="sigma" type="REAL" null="true" default="0"/>
+      <column name="delta" type="REAL" null="true" default="0"/>
+      <column name="ispta_s" type="REAL" null="true" default="0"/>
+      <column name="ipa3_mi" type="REAL" null="true" default="0"/>
+      <column name="ispta3_s" type="REAL" null="true" default="0"/>
+      <column name="FL_Azim" type="REAL" null="true" default="0"/>
+      <column name="FL_Elev" type="REAL" null="true" default="0"/>
+      <column name="AaptAzim" type="REAL" null="true" default="0"/>
+      <column name="deq4MI" type="REAL" null="true" default="0"/>
+      <column name="deq4TIB" type="REAL" null="true" default="0"/>
+      <column name="zB3" type="REAL" null="true" default="0"/>
+      <column name="w01_mW" type="REAL" null="true" default="0"/>
+      <column name="zBP_cm" type="REAL" null="true" default="0"/>
+      <column name="z1_cm" type="REAL" null="true" default="0"/>
+      <column name="minW3ITA3_mW" type="REAL" null="true" default="0"/>
+      <column name="ticas_s" type="REAL" null="true" default="0"/>
+      <column name="tisas_s" type="REAL" null="true" default="0"/>
       <primary-key>
         <column name="id_mtp"/>
       </primary-key>

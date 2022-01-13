@@ -75,23 +75,35 @@ class Versions {
     friend class odb::access;
     Versions() {}
 
-#pragma db id
+#pragma db id auto
     unsigned int id_version;
     QString comments;
 };
 
 /*-------------------------------------*/
-#pragma db object
+#pragma db value(bool) default(false)
+#pragma db value(int) default(0)
+#pragma db value(double) default(0) not_null
+
+#pragma db object no_id
 struct UTPs {
-#pragma db id
+#pragma db index("utp_id_utp_idx") unique method("BTREE") member(id_utp, "DESC")
+#pragma db index("utp_pkey_idx") unique method("BTREE")                                                                \
+    members(location, nb_element, id_probe, id_apodization, freq, nb_half_cycle, polarity, transmit_lines, delta,      \
+            composed_mode, duty_cycle, nb_element_max, voltage, id_pulse_type)
+#pragma db index("utp_id_mtp_idx") unique method("BTREE") member(id_mtp, "DESC")
     int id_utp;
     int id_pulse_type;
+#pragma db default(-1)
     int id_probe;
+#pragma db null
     int id_mode;
     int id_apodization;
+#pragma db default(-1)
     int id_mtp;
     int location;
     int nb_element;
+#pragma db options("NOT NULL")
     double freq;
     int nb_half_cycle;
     int polarity;

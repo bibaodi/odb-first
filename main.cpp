@@ -35,6 +35,6 @@ int main(int argc, char *argv[]) {
     engine.load(url);
     // main_db(argc, argv);
     APAI_DB_Adapter ada("testapai.db");
-
+    ada.addVersion("init by eton when testing.");
     return app.exec();
 }
