@@ -44,16 +44,16 @@
       <column name="id_mtp" type="INTEGER" null="false" default="-1"/>
       <column name="location" type="INTEGER" null="false" default="0"/>
       <column name="nb_element" type="INTEGER" null="false" default="0"/>
-      <column name="freq" type="REAL" null="true" default="0" options="NOT NULL"/>
+      <column name="freq" type="REAL" null="false" default="0"/>
       <column name="nb_half_cycle" type="INTEGER" null="false" default="0"/>
       <column name="polarity" type="INTEGER" null="false" default="0"/>
       <column name="transmit_lines" type="INTEGER" null="false" default="0"/>
       <column name="composed_mode" type="INTEGER" null="false" default="0"/>
       <column name="duty_cycle" type="INTEGER" null="false" default="0"/>
       <column name="nb_element_max" type="INTEGER" null="false" default="0"/>
-      <column name="voltage" type="REAL" null="true" default="0"/>
+      <column name="voltage" type="REAL" null="false" default="0"/>
       <column name="delta" type="INTEGER" null="false" default="0"/>
-      <column name="deltaT" type="INTEGER" null="false" default="0"/>
+      <column name="deltaT" type="REAL" null="false" default="0"/>
       <column name="manipulated" type="INTEGER" null="false" default="0"/>
       <index name="utp_id_utp_idx" type="UNIQUE" method="BTREE">
         <column name="id_utp" options="DESC"/>
@@ -80,7 +80,7 @@
     </table>
     <table name="UTPInfos" kind="object">
       <column name="id_utp" type="INTEGER" null="false"/>
-      <column name="framerate_multiplier" type="REAL" null="true" default="0"/>
+      <column name="framerate_multiplier" type="REAL" null="false" default="0"/>
       <column name="framerate_multiplier_m" type="REAL" null="true" default="0"/>
       <column name="max_voltage" type="REAL" null="true" default="0"/>
       <column name="voltage" type="REAL" null="true" default="0"/>

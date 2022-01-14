@@ -8,7 +8,7 @@
 #pragma db object
 class Probes {
   public:
-    Probes(const QString &name) : probe_name(name) {}
+    Probes(const int &_id, const QString &name) : id_probe(_id), probe_name(name) {}
     const QString &probe() const { return probe_name; }
 
   private:
@@ -23,7 +23,7 @@ class Probes {
 #pragma db object
 class Modes {
   public:
-    Modes(const QString &name) : mode_name(name) {}
+    Modes(const int &_id, const QString &name) : id_mode(_id), mode_name(name) {}
     const QString &mode() const { return mode_name; }
 
   private:
@@ -38,7 +38,7 @@ class Modes {
 #pragma db object
 class PulseTypes {
   public:
-    PulseTypes(const QString &name) : pulse_name(name) {}
+    PulseTypes(const int &_id, const QString &name) : id_pulse(_id), pulse_name(name) {}
     const QString &pulse() const { return pulse_name; }
 
   private:
@@ -53,7 +53,7 @@ class PulseTypes {
 #pragma db object
 class Apodizations {
   public:
-    Apodizations(const QString &name) : apodization_name(name) {}
+    Apodizations(const int &_id, const QString &name) : id_apodization(_id), apodization_name(name) {}
     const QString &pulse() const { return apodization_name; }
 
   private:
@@ -84,7 +84,8 @@ class Versions {
 #pragma db value(bool) default(false)
 #pragma db value(int) default(0)
 #pragma db value(double) default(0) not_null
-
+// in ODB SQLite Type Mapping, only float and double default is null others are not null. so change value program to
+// not_null and make default=0;
 #pragma db object no_id
 struct UTPs {
 #pragma db index("utp_id_utp_idx") unique method("BTREE") member(id_utp, "DESC")
@@ -103,7 +104,7 @@ struct UTPs {
     int id_mtp;
     int location;
     int nb_element;
-#pragma db options("NOT NULL")
+#pragma db not_null
     double freq;
     int nb_half_cycle;
     int polarity;
@@ -111,9 +112,11 @@ struct UTPs {
     int composed_mode;
     int duty_cycle;
     int nb_element_max;
+#pragma db not_null
     double voltage;
     int delta;
-    int deltaT;
+#pragma db not_null
+    double deltaT;
     bool manipulated;
 };
 
@@ -121,6 +124,7 @@ struct UTPs {
 struct UTPInfos {
 #pragma db id
     int id_utp;
+#pragma db not_null
     double framerate_multiplier;
     double framerate_multiplier_m;
     double max_voltage;
@@ -135,6 +139,7 @@ struct UTPInfos {
     QString settings;
 };
 
+#pragma db not_null
 #pragma db object
 struct MTPs {
 #pragma db id

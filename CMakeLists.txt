@@ -23,12 +23,14 @@ find_package(ODB REQUIRED COMPONENTS sqlite OPTIONAL_COMPONENTS )
 
 include(${ODB_USE_FILE})
 
+file(GLOB CSV_LIB  ./qtcsv/*)
 aux_source_directory(. SRC_LIST)
 file(GLOB HEAD_LIST  *.h)
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/models $ENV{QT_INCLUDE_DIR})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR}/models $ENV{QT_INCLUDE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/qtcsv)
 
 file(GLOB OdbCMake_ODB_HEADERS
         ./models/*.h)
+
 message(STATUS "debug:" ${OdbCMake_ODB_HEADERS})
 message(STATUS "debug::qt include:" $ENV{QT_INCLUDE_DIR})
 
@@ -45,7 +47,8 @@ set(PROJECT_SOURCES
         qml.qrc
            ${SRC_LIST} ${HEAD_LIST}
            ${OdbCMake_OUTPUTS}
-           ${OdbCMake_ODB_HEADERS})
+           ${OdbCMake_ODB_HEADERS}
+           ${CSV_LIB})
 
 
 add_executable(${TARGET} ${PROJECT_SOURCES})
