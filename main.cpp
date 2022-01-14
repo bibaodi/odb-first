@@ -23,6 +23,37 @@
 //--csv.begin.end
 #include <vector>
 
+#define APAI_STATIC_TABLE_COUNTS 4
+
+bool generate_db() {
+    bool success[APAI_STATIC_TABLE_COUNTS] = {false};
+    APAI_DB_Adapter ada("testapai.db");
+    ada.addVersion("init by eton when testing.");
+
+    QString csv_files[APAI_STATIC_TABLE_COUNTS] = {QString("probes"), QString("modes"), QString("apods"),
+                                                   QString("pulses")};
+
+    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS; i++) {
+        QList<QStringList> csv_datas = QtCSV::Reader::readToList(QString("/tmp/%1.csv").arg(csv_files[i]));
+
+        for (int i = 0; i < csv_datas.size(); ++i) {
+            qDebug() << csv_datas.at(i).join(",");
+        }
+        if (csv_datas.length() < 1) {
+            success[i] = false;
+        } else {
+            std::vector<QStringList> _rows = csv_datas.toVector().toStdVector();
+            success[i] = ada.addRows(_rows, i);
+        }
+    }
+    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS; i++) {
+        if (!success[i]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 int main(int argc, char *argv[]) {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
@@ -41,18 +72,6 @@ int main(int argc, char *argv[]) {
         Qt::QueuedConnection);
     engine.load(url);
     // main_db(argc, argv);
-    APAI_DB_Adapter ada("testapai.db");
-    ada.addVersion("init by eton when testing.");
-    ada.addVersion("init by eton when testing2.");
-
-    QList<QStringList> readData = QtCSV::Reader::readToList("/tmp/modes.csv");
-    for (int i = 0; i < readData.size(); ++i) {
-        qDebug() << readData.at(i).join(",");
-    }
-    std::vector<QStringList> _rows = readData.toVector().toStdVector();
-    ada.addModes(_rows);
-    ada.addRows(_rows, APAI_DB_Adapter::TABLE_APOD);
-    std::vector<int> _ids;
-    std::vector<QString> _names;
+    generate_db();
     return app.exec();
 }

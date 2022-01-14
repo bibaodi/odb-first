@@ -187,6 +187,7 @@ bool APAI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) 
             break;
         }
         default:
+            qDebug() << "no table match...";
             break;
         }
         if (!ret_ok) {

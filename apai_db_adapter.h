@@ -21,7 +21,7 @@ class APAI_DB_Adapter : public ESIDatabase {
 
   public:
     enum TABLE_TYPE {
-        TABLE_PROBE = 4719,
+        TABLE_PROBE = 0,
         TABLE_MODE,
         TABLE_APOD,
         TABLE_PULSE,
