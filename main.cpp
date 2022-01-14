@@ -35,10 +35,9 @@ bool generate_db() {
 
     for (int i = 0; i < APAI_STATIC_TABLE_COUNTS; i++) {
         QList<QStringList> csv_datas = QtCSV::Reader::readToList(QString("/tmp/%1.csv").arg(csv_files[i]));
-
-        for (int i = 0; i < csv_datas.size(); ++i) {
-            qDebug() << csv_datas.at(i).join(",");
-        }
+        //        for (int i = 0; i < csv_datas.size(); ++i) {
+        //            qDebug() << csv_datas.at(i).join(",");
+        //        }
         if (csv_datas.length() < 1) {
             success[i] = false;
         } else {
@@ -55,12 +54,7 @@ bool generate_db() {
 }
 
 int main(int argc, char *argv[]) {
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-
     QGuiApplication app(argc, argv);
-
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
     QObject::connect(
@@ -71,7 +65,10 @@ int main(int argc, char *argv[]) {
         },
         Qt::QueuedConnection);
     engine.load(url);
-    // main_db(argc, argv);
-    generate_db();
+    bool db_ok = generate_db();
+    if (!db_ok) {
+        qDebug() << "Data base generate not successful.";
+        return -1;
+    }
     return app.exec();
 }

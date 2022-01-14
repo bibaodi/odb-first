@@ -174,6 +174,10 @@ bool APAI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) 
         if (_row.length() < 2) {
             return false;
         }
+        if (_row.contains("id_")) {
+            qDebug() << "CSV Table Header:" << _row;
+            continue;
+        }
         switch (table_type) {
         case TABLE_MODE:
             ret_ok = addMode(_row[0].toInt(), _row[1]);
