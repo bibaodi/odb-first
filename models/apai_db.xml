@@ -74,7 +74,7 @@
         <column name="voltage"/>
         <column name="id_pulse_type"/>
       </index>
-      <index name="utp_id_mtp_idx" type="UNIQUE" method="BTREE">
+      <index name="utp_id_mtp_idx" method="BTREE">
         <column name="id_mtp" options="DESC"/>
       </index>
     </table>
@@ -89,7 +89,7 @@
       <column name="tis" type="REAL" null="true" default="0"/>
       <column name="ispta" type="REAL" null="true" default="0"/>
       <column name="valid" type="INTEGER" null="false" default="0"/>
-      <column name="preset" type="TEXT" null="true"/>
+      <column name="presets" type="TEXT" null="true"/>
       <column name="tic" type="REAL" null="true" default="0"/>
       <column name="settings" type="TEXT" null="true"/>
       <primary-key>

@@ -65,6 +65,8 @@ class Apodizations {
     QString apodization_name;
 };
 
+#define printMembName(memb) qDebug << (memb, #memb);
+
 #pragma db object
 class Versions {
   public:
@@ -88,11 +90,13 @@ class Versions {
 // not_null and make default=0;
 #pragma db object no_id
 struct UTPs {
+  public:
+    UTPs(bool manipulated) : manipulated(manipulated) {}
 #pragma db index("utp_id_utp_idx") unique method("BTREE") member(id_utp, "DESC")
 #pragma db index("utp_pkey_idx") unique method("BTREE")                                                                \
     members(location, nb_element, id_probe, id_apodization, freq, nb_half_cycle, polarity, transmit_lines, delta,      \
             composed_mode, duty_cycle, nb_element_max, voltage, id_pulse_type)
-#pragma db index("utp_id_mtp_idx") unique method("BTREE") member(id_mtp, "DESC")
+#pragma db index("utp_id_mtp_idx") method("BTREE") member(id_mtp, "DESC")
     int id_utp;
     int id_pulse_type;
 #pragma db default(-1)
@@ -134,7 +138,7 @@ struct UTPInfos {
     double tis;
     double ispta;
     int valid;
-    QString preset;
+    QString presets;
     double tic;
     QString settings;
 };

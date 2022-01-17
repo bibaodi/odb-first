@@ -24,16 +24,18 @@
 #include <vector>
 
 #define APAI_STATIC_TABLE_COUNTS 4
+#define APAI_DYNAMIC_TABLE_COUNTS 3 + 1
 
 bool generate_db() {
-    bool success[APAI_STATIC_TABLE_COUNTS] = {false};
+    bool success[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {false};
     APAI_DB_Adapter ada("testapai.db");
     ada.addVersion("init by eton when testing.");
 
-    QString csv_files[APAI_STATIC_TABLE_COUNTS] = {QString("probes"), QString("modes"), QString("apods"),
-                                                   QString("pulses")};
+    QString csv_files[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {
+        QStringLiteral("probes"), QStringLiteral("modes"), QStringLiteral("apodizations"), QStringLiteral("pulses"),
+        QLatin1String("null"),    QStringLiteral("UTPs"),  QStringLiteral("MTPs"),         QStringLiteral("UTP_Infos")};
 
-    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS; i++) {
+    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS; i++) {
         QList<QStringList> csv_datas = QtCSV::Reader::readToList(QString("/tmp/%1.csv").arg(csv_files[i]));
         //        for (int i = 0; i < csv_datas.size(); ++i) {
         //            qDebug() << csv_datas.at(i).join(",");
@@ -45,7 +47,7 @@ bool generate_db() {
             success[i] = ada.addRows(_rows, i);
         }
     }
-    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS; i++) {
+    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS; i++) {
         if (!success[i]) {
             return false;
         }

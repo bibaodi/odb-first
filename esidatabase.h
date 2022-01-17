@@ -13,6 +13,8 @@ class ESIDatabase : public odb::sqlite::database {
     ~ESIDatabase();
     bool beginTrans();
     bool commitTrans();
+    const QTextCodec *get_codec(void) { return m_codec; }
+    sqlite3 *get_handler(void) { return m_dbHandler; }
 
   private:
     bool isTableExist(const QString &table_name);
