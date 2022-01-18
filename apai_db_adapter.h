@@ -33,6 +33,76 @@ enum class UTP_COLs {
     manipulated
 };
 
+enum class UTPINFO_COLs {
+    id_utp = 0,
+    framerate_multiplier,
+    framerate_multiplier_m,
+    max_voltage,
+    voltage,
+    mi,
+    tib,
+    tis,
+    ispta,
+    valid,
+    presets,
+    tic,
+    settings
+};
+
+enum class MTP_COLs {
+    id_mtp = 0,
+    id_utp,
+    T,
+    mi,
+    mi_inv,
+    pii_0_u,
+    pii_3_u,
+    pii_0_s,
+    pii_3_s,
+    pii_3_inv_u,
+    pii_3_inv_s,
+    w0,
+    tisas_u,
+    tisas_s_factor,
+    tisbs_u,
+    tibbs_u,
+    ticas_u,
+    ticas_s_factor,
+    td_u,
+    td_s,
+    ec_hv,
+    pd,
+    pr,
+    pc,
+    isppa,
+    ispta,
+    fc3,
+    fc6,
+    pr3,
+    tisbs_s,
+    tibbs_s,
+    w0_s,
+    z0,
+    z3,
+    sigma,
+    delta,
+    ispta_s,
+    ipa3_mi,
+    ispta3_s,
+    FL_Azim,
+    FL_Elev,
+    AaptAzim,
+    deq4MI,
+    deq4TIB,
+    zB3,
+    w01_mW,
+    zBP_cm,
+    z1_cm,
+    minW3ITA3_mW,
+    ticas_s,
+    tisas_s,
+};
+
 struct TableInfo {
     int cid;
     QString name;
@@ -57,9 +127,10 @@ class APAI_DB_Adapter : public ESIDatabase {
     bool addProbes(const vector<int> &_id, const vector<QString> &_name);
     bool addMode(const int &_id, const QString &_name);
     bool addRow(const int &_id, const QString &_name, int);
-    bool addRow(const UTPs &, int);
-    bool addRow(const MTPs &, int);
-    bool addRow(const UTPInfos &, int);
+    bool addUtpRow(const UTPs &);
+    bool addMtpRow(const MTPs &);
+    bool addUtpiRow(const UTPInfos &);
+    bool addRow(void *, int);
     bool addModes(const vector<int> &_id, const vector<QString> &_name);
     bool addModes(const vector<QStringList> &_rows);
     bool addRows(const vector<QStringList> &_rows, int table_type);
@@ -79,6 +150,8 @@ class APAI_DB_Adapter : public ESIDatabase {
 
     static const QString TableNames[];
     static const QString UTP_ColNames[];
+    static const QString UTPINFO_ColNames[];
+    static const QString MTP_ColNames[];
 };
 
 #endif // APAI_DB_ADAPTER_H

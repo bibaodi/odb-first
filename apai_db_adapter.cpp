@@ -9,8 +9,6 @@
 #include <string>
 #include <string_view>
 
-#define matchHeader(x) QString member_name(#x)
-
 const QString APAI_DB_Adapter::TableNames[] = {
     QStringLiteral("Probes"),     QStringLiteral("Modes"),    QStringLiteral("Apodizations"),
     QStringLiteral("PulseTypes"), QStringLiteral("null"),     QStringLiteral("UTPs"),
@@ -20,6 +18,34 @@ const QString APAI_DB_Adapter::UTP_ColNames[] = {
     "id_utp",         " id_pulse_type", "id_probe",      "id_mode",  "id_apodization", "id_mtp",        "location",
     "nb_element",     "freq",           "nb_half_cycle", "polarity", "transmit_lines", "composed_mode", "duty_cycle",
     "nb_element_max", "voltage",        "delta",         "deltaT",   "manipulated",
+};
+
+const QString APAI_DB_Adapter::UTPINFO_ColNames[] = {
+    "id_utp",
+    "framerate_multiplier",
+    "framerate_multiplier_m",
+    "max_voltage",
+    "voltage",
+    "mi",
+    "tib",
+    "tis",
+    "ispta",
+    "valid",
+    "presets",
+    "tic",
+    "settings",
+};
+
+const QString APAI_DB_Adapter::MTP_ColNames[] = {
+    "id_mtp",       "id_utp",         "T",        "mi",          "mi_inv",      "pii_0_u",
+    "pii_3_u",      "pii_0_s",        "pii_3_s",  "pii_3_inv_u", "pii_3_inv_s", "w0",
+    "tisas_u",      "tisas_s_factor", "tisbs_u",  "tibbs_u",     "ticas_u",     "ticas_s_factor",
+    "td_u",         "td_s",           "ec_hv",    "pd",          "pr",          "pc",
+    "isppa",        "ispta",          "fc3",      "fc6",         "pr3",         "tisbs_s",
+    "tibbs_s",      "w0_s",           "z0",       "z3",          "sigma",       "delta",
+    "ispta_s",      "ipa3_mi",        "ispta3_s", "FL_Azim",     "FL_Elev",     "AaptAzim",
+    "deq4MI",       "deq4TIB",        "zB3",      "w01_mW",      "zBP_cm",      "z1_cm",
+    "minW3ITA3_mW", "ticas_s",        "tisas_s",
 };
 
 APAI_DB_Adapter::APAI_DB_Adapter(const QString &file_name) : ESIDatabase(file_name, DB_SCHEMA_NAME, APAI_DB_VERSION) {}
@@ -202,26 +228,57 @@ bool APAI_DB_Adapter::addModes(const vector<int> &_ids, const vector<QString> &_
     return ret_ok;
 }
 
-bool APAI_DB_Adapter::addRow(const UTPs &utp, int table_type) {
+bool APAI_DB_Adapter::addRow(void *object_item, int table_type) {
     bool ret_ok = false;
     ret_ok = beginTrans();
     if (!ret_ok) {
         return ret_ok;
     }
 
-    try {
-        persist<UTPs>(utp);
-    } catch (const odb::exception &e) {
-        qDebug() << e.what();
-        return false;
+    switch (table_type) {
+    case TABLE_UTP: {
+        try {
+            UTPs *ptr = (UTPs *)object_item;
+            persist<UTPs>(*ptr);
+        } catch (const odb::exception &e) {
+            qDebug() << e.what();
+            return false;
+        }
+        break;
     }
-
+    case TABLE_MTP: {
+        try {
+            MTPs *ptr = (MTPs *)object_item;
+            persist<MTPs>(*ptr);
+        } catch (const odb::exception &e) {
+            qDebug() << e.what();
+            return false;
+        }
+        break;
+    }
+    case TABLE_UTPI: {
+        try {
+            UTPInfos *ptr = (UTPInfos *)object_item;
+            persist<UTPInfos>(*ptr);
+        } catch (const odb::exception &e) {
+            qDebug() << e.what();
+            return false;
+        }
+        break;
+    }
+    }
     ret_ok = commitTrans();
 
     return ret_ok;
 }
-bool APAI_DB_Adapter::addRow(const MTPs &, int) { return true; }
-bool APAI_DB_Adapter::addRow(const UTPInfos &, int) { return true; }
+
+inline bool APAI_DB_Adapter::addUtpRow(const UTPs &utp) { return addRow((void *)(&utp), static_cast<int>(TABLE_UTP)); }
+
+inline bool APAI_DB_Adapter::addMtpRow(const MTPs &mtp) { return addRow((void *)(&mtp), static_cast<int>(TABLE_MTP)); }
+
+inline bool APAI_DB_Adapter::addUtpiRow(const UTPInfos &utpinfo) {
+    return addRow((void *)(&utpinfo), static_cast<int>(TABLE_UTPI));
+}
 
 bool APAI_DB_Adapter::addRow(const int &_id, const QString &_name, int table_type) {
     bool ret_ok = false;
@@ -291,11 +348,11 @@ bool APAI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) 
     }
     const QStringList headers = _rows[0];
 
-    for (int i = 1; i < _rows.size(); i++) {
-        if (i < 10) {
-            qDebug() << "row=" << _rows[i] << "::" << i;
+    for (int _ri = 1; _ri < _rows.size(); _ri++) {
+        if (_ri < 10) {
+            qDebug() << "row=" << _rows[_ri] << "::" << _ri;
         }
-        _row = _rows[i];
+        _row = _rows[_ri];
         if (_row.length() < 2) {
             return false;
         }
@@ -395,10 +452,296 @@ bool APAI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) 
                                       Qt::CaseInsensitive)) {
                     utp.manipulated = item.toInt();
                 }
+                if (_ri > 100) {
+                    return true;
+                }
             }
-            ret_ok = addRow(utp, table_type);
+            ret_ok = addUtpRow(utp);
             if (!ret_ok && err_count < 10) {
-                qDebug() << i << ":]utp not insert successful:" << _row;
+                qDebug() << _ri << ":]utp not insert successful:" << _row;
+                err_count++;
+                ret_ok = true;
+            }
+            break;
+        }
+        case TABLE_UTPI: {
+            UTPInfos utpinfo;
+            for (int _ic = 0; _ic < headers.length(); _ic++) {
+                QString *item = &(_row[_ic]);
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::id_utp)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.id_utp = item->toInt();
+                }
+                if (!QString::compare(headers[_ic],
+                                      UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::framerate_multiplier)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.framerate_multiplier = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic],
+                                      UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::framerate_multiplier_m)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.framerate_multiplier_m = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::max_voltage)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.max_voltage = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::voltage)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.voltage = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::mi)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.mi = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::tib)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.tib = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::tis)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.tis = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::ispta)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.ispta = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::valid)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.valid = item->toInt();
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::mi)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.presets = *item;
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::tic)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.tic = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], UTPINFO_ColNames[static_cast<int>(UTPINFO_COLs::settings)],
+                                      Qt::CaseInsensitive)) {
+                    utpinfo.settings = *item;
+                }
+            }
+            ret_ok = addRow((void *)&utpinfo, table_type);
+            if (!ret_ok && err_count < 10) {
+                qDebug() << _ri << ":]utpInfo not insert successful:" << _row;
+                err_count++;
+                ret_ok = true;
+            }
+            break;
+        }
+        case TABLE_MTP: {
+            MTPs mtp;
+            for (int _ic = 0; _ic < headers.length(); _ic++) {
+                QString *item = &(_row[_ic]);
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::id_mtp)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.id_mtp = item->toInt();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::id_utp)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.id_utp = item->toInt();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::T)], Qt::CaseInsensitive)) {
+                    mtp.T = item->toInt();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::mi)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.mi = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::mi_inv)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.mi_inv = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pii_0_u)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pii_0_u = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pii_3_u)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pii_3_u = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pii_0_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pii_0_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pii_3_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pii_3_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pii_3_inv_u)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pii_3_inv_u = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pii_3_inv_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pii_3_inv_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::w0)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.w0 = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::tisas_u)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.tisas_u = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::tisas_s_factor)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.tisas_s_factor = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::tisbs_u)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.tisbs_u = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::tibbs_u)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.tibbs_u = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::ticas_u)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.ticas_u = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::ticas_s_factor)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.ticas_s_factor = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::td_u)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.td_u = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::td_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.td_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::ec_hv)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.ec_hv = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pd)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pd = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pr)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pr = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pc)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pc = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::isppa)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.isppa = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::ispta)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.ispta = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::fc3)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.fc3 = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::fc6)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.fc6 = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::pr3)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.pr3 = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::tisbs_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.tisbs_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::tibbs_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.tibbs_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::w0_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.w0_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::z0)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.z0 = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::z3)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.z3 = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::sigma)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.sigma = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::delta)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.delta = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::ispta_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.ispta_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::ipa3_mi)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.ipa3_mi = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::ispta3_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.ispta3_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::FL_Azim)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.FL_Azim = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::FL_Elev)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.FL_Elev = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::AaptAzim)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.AaptAzim = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::deq4MI)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.deq4MI = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::deq4TIB)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.deq4TIB = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::zB3)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.zB3 = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::w01_mW)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.w01_mW = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::zBP_cm)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.zBP_cm = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::z1_cm)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.z1_cm = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::minW3ITA3_mW)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.minW3ITA3_mW = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::ticas_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.ticas_s = item->toDouble();
+                }
+                if (!QString::compare(headers[_ic], MTP_ColNames[static_cast<int>(MTP_COLs::tisas_s)],
+                                      Qt::CaseInsensitive)) {
+                    mtp.tisas_s = item->toDouble();
+                }
+            }
+            ret_ok = addRow((void *)&mtp, table_type);
+            if (!ret_ok && err_count < 10) {
+                qDebug() << _ri << ":]mtp not insert successful:" << _row;
                 err_count++;
                 ret_ok = true;
             }

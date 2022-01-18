@@ -6,5 +6,11 @@
 # Version
 	- 22/02/11 generate file-odb.{h|i|c|}xx by odb cli.
 	- 22/02/12 generate file-odb.{h|i|c|}xx by odb-cmake auto.
-
-ref:https://github.com/BtbN/OdbCmake.git
+# Usage:
+	generate csv file from excel, put all input csv file to below path, then run application, the sqlite db file named "apai-gen.db" will in same directory.
+	```
+	/tmp/MTPs.csv       /tmp/UTPs.csv          /tmp/modes.csv   /tmp/pulses.csv
+	/tmp/UTP_Infos.csv  /tmp/apodizations.csv  /tmp/probes.csv
+	```
+# refs:
+- https://github.com/BtbN/OdbCmake.git

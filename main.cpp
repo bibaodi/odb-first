@@ -21,6 +21,7 @@
 #include "stringdata.h"
 #include "writer.h"
 //--csv.begin.end
+#include <QFile>
 #include <vector>
 
 #define APAI_STATIC_TABLE_COUNTS 4
@@ -28,14 +29,24 @@
 
 bool generate_db() {
     bool success[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {false};
-    APAI_DB_Adapter ada("testapai.db");
-    ada.addVersion("init by eton when testing.");
+    APAI_DB_Adapter ada("apai-gen.db");
+    ada.addVersion("init by eton when testing, generate all db with datas.");
 
     QString csv_files[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {
         QStringLiteral("probes"), QStringLiteral("modes"), QStringLiteral("apodizations"), QStringLiteral("pulses"),
         QLatin1String("null"),    QStringLiteral("UTPs"),  QStringLiteral("MTPs"),         QStringLiteral("UTP_Infos")};
 
     for (int i = 0; i < APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS; i++) {
+        QFile csvfile(QString("/tmp/%1.csv").arg(csv_files[i]));
+        if (!csvfile.exists()) {
+            qDebug() << "file Not exist. please ensure all exist~" << csvfile.fileName();
+        }
+    }
+    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS; i++) {
+        if (csv_files[i].contains("null", Qt::CaseInsensitive)) {
+            success[i] = true;
+            continue;
+        }
         QList<QStringList> csv_datas = QtCSV::Reader::readToList(QString("/tmp/%1.csv").arg(csv_files[i]));
         //        for (int i = 0; i < csv_datas.size(); ++i) {
         //            qDebug() << csv_datas.at(i).join(",");
@@ -46,6 +57,7 @@ bool generate_db() {
             std::vector<QStringList> _rows = csv_datas.toVector().toStdVector();
             success[i] = ada.addRows(_rows, i);
         }
+        qDebug() << i << ": success=" << success[i];
     }
     for (int i = 0; i < APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS; i++) {
         if (!success[i]) {
@@ -71,6 +83,8 @@ int main(int argc, char *argv[]) {
     if (!db_ok) {
         qDebug() << "Data base generate not successful.";
         return -1;
+    } else {
+        qDebug() << "Data base generate successful... congratulations~~";
     }
     return app.exec();
 }
