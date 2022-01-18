@@ -7,13 +7,14 @@
 	- 22/02/11 generate file-odb.{h|i|c|}xx by odb cli.
 	- 22/02/12 generate file-odb.{h|i|c|}xx by odb-cmake auto.
 # Usage:
-	generate csv file from excel, put all input csv file to below path, then run application, the sqlite db file named "apai-gen.db" will in same directory.
-	```
+	- generate csv file from excel, put all input csv file to below path, then run application, the sqlite db file named "apai-gen.db" will in same directory.
+	
+```
 	/tmp/MTPs.csv       /tmp/UTPs.csv          /tmp/modes.csv   /tmp/pulses.csv
 	/tmp/UTP_Infos.csv  /tmp/apodizations.csv  /tmp/probes.csv
-	```
+```
 
-	export csv from Excel:
+	- export csv from Excel:
 ```
 Sub ExportSheetsToCSV()
 	Dim xWs As Worksheet
