@@ -10,7 +10,7 @@
 #include "database_create.h" // create_database
 
 #include "apai_db_adapter.h"
-#include "person-odb.hxx"
+//#include "person-odb.hxx"
 #include "person.h"
 
 #include <QGuiApplication>
@@ -26,6 +26,8 @@
 
 #define APAI_STATIC_TABLE_COUNTS 4
 #define APAI_DYNAMIC_TABLE_COUNTS 3 + 1
+
+#define DEBUG_UI 1
 
 bool generate_db() {
     bool success[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {false};
@@ -79,12 +81,14 @@ int main(int argc, char *argv[]) {
         },
         Qt::QueuedConnection);
     engine.load(url);
-    bool db_ok = generate_db();
-    if (!db_ok) {
-        qDebug() << "Data base generate not successful.";
-        return -1;
-    } else {
-        qDebug() << "Data base generate successful... congratulations~~";
+    if (!DEBUG_UI) {
+        bool db_ok = generate_db();
+        if (!db_ok) {
+            qDebug() << "Data base generate not successful.";
+            return -1;
+        } else {
+            qDebug() << "Data base generate successful... congratulations~~";
+        }
     }
     return app.exec();
 }
