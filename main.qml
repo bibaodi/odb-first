@@ -24,9 +24,12 @@ Window {
             height: 50
             spacing: id_grid_params.columnSpacing
 
-            ComboBox {
+            ParamSelectItem {
                 id: id_comboBox_utp
                 width: id_location_item.width
+                height: parent.height
+                param_label: "utp_id"
+                param_unit: " "
             }
             Rectangle {
                 border.color: "green"

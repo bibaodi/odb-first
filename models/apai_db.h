@@ -198,5 +198,6 @@ struct MTPs {
     double minW3ITA3_mW;
     double ticas_s;
     double tisas_s;
+    double T; // steven add this for temperature --eton@22/02/21
 };
 #endif // APAI_DB_H

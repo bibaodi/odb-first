@@ -2,5 +2,6 @@
     <qresource prefix="/">
         <file>main.qml</file>
         <file>ParamInputItem.qml</file>
+        <file>ParamSelectItem.qml</file>
     </qresource>
 </RCC>
