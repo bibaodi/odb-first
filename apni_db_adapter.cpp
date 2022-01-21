@@ -1,6 +1,6 @@
-#include "apai_db_adapter.h"
-#include "apai_db-odb.hxx"
-#include "apai_db.h"
+#include "apni_db_adapter.h"
+#include "apni_db-odb.hxx"
+#include "apni_db.h"
 #include <QTextCodec>
 #include <iostream>
 #include <odb/sqlite/exceptions.hxx>
@@ -9,18 +9,18 @@
 #include <string>
 #include <string_view>
 
-const QString APAI_DB_Adapter::TableNames[] = {
+const QString APNI_DB_Adapter::TableNames[] = {
     QStringLiteral("Probes"),     QStringLiteral("Modes"),    QStringLiteral("Apodizations"),
     QStringLiteral("PulseTypes"), QStringLiteral("null"),     QStringLiteral("UTPs"),
     QStringLiteral("MTPs"),       QStringLiteral("UTPInfos"), QLatin1Literal()};
 
-const QString APAI_DB_Adapter::UTP_ColNames[] = {
+const QString APNI_DB_Adapter::UTP_ColNames[] = {
     "id_utp",         " id_pulse_type", "id_probe",      "id_mode",  "id_apodization", "id_mtp",        "location",
     "nb_element",     "freq",           "nb_half_cycle", "polarity", "transmit_lines", "composed_mode", "duty_cycle",
     "nb_element_max", "voltage",        "delta",         "deltaT",   "manipulated",
 };
 
-const QString APAI_DB_Adapter::UTPINFO_ColNames[] = {
+const QString APNI_DB_Adapter::UTPINFO_ColNames[] = {
     "id_utp",
     "framerate_multiplier",
     "framerate_multiplier_m",
@@ -36,7 +36,7 @@ const QString APAI_DB_Adapter::UTPINFO_ColNames[] = {
     "settings",
 };
 
-const QString APAI_DB_Adapter::MTP_ColNames[] = {
+const QString APNI_DB_Adapter::MTP_ColNames[] = {
     "id_mtp",       "id_utp",         "T",        "mi",          "mi_inv",      "pii_0_u",
     "pii_3_u",      "pii_0_s",        "pii_3_s",  "pii_3_inv_u", "pii_3_inv_s", "w0",
     "tisas_u",      "tisas_s_factor", "tisbs_u",  "tibbs_u",     "ticas_u",     "ticas_s_factor",
@@ -48,9 +48,9 @@ const QString APAI_DB_Adapter::MTP_ColNames[] = {
     "minW3ITA3_mW", "ticas_s",        "tisas_s",
 };
 
-APAI_DB_Adapter::APAI_DB_Adapter(const QString &file_name) : ESIDatabase(file_name, DB_SCHEMA_NAME, APAI_DB_VERSION) {}
+APNI_DB_Adapter::APNI_DB_Adapter(const QString &file_name) : ESIDatabase(file_name, DB_SCHEMA_NAME, APAI_DB_VERSION) {}
 
-bool APAI_DB_Adapter::isHeaderMatch(const QStringList &csvHeaders, int table_type) {
+bool APNI_DB_Adapter::isHeaderMatch(const QStringList &csvHeaders, int table_type) {
     qDebug() << "\nisHeaderMatch >>" << TableNames[table_type];
     if (csvHeaders.length() < 2) {
         return false;
@@ -96,7 +96,7 @@ bool APAI_DB_Adapter::isHeaderMatch(const QStringList &csvHeaders, int table_typ
     return true;
 }
 
-bool APAI_DB_Adapter::queryTableInfo(const QString &tb_name, QList<TableInfo> &tbinfos) {
+bool APNI_DB_Adapter::queryTableInfo(const QString &tb_name, QList<TableInfo> &tbinfos) {
     try {
         char **result = nullptr;
         int cols;
@@ -125,7 +125,7 @@ bool APAI_DB_Adapter::queryTableInfo(const QString &tb_name, QList<TableInfo> &t
     }
 }
 
-void APAI_DB_Adapter::addVersion(const QString &msg) {
+void APNI_DB_Adapter::addVersion(const QString &msg) {
     // transaction tr(beginTrans());
     beginTrans();
     Versions _version(msg);
@@ -133,7 +133,7 @@ void APAI_DB_Adapter::addVersion(const QString &msg) {
     commitTrans();
 }
 
-bool APAI_DB_Adapter::addProbe(const int &_id, const QString &_name) {
+bool APNI_DB_Adapter::addProbe(const int &_id, const QString &_name) {
     bool ret_ok = false;
     ret_ok = beginTrans();
     if (!ret_ok) {
@@ -152,7 +152,7 @@ bool APAI_DB_Adapter::addProbe(const int &_id, const QString &_name) {
     return ret_ok;
 }
 
-bool APAI_DB_Adapter::addProbes(const vector<int> &_ids, const vector<QString> &_names) {
+bool APNI_DB_Adapter::addProbes(const vector<int> &_ids, const vector<QString> &_names) {
     bool ret_ok = false;
     const int len_id = _ids.size();
     const int len_name = _names.size();
@@ -180,7 +180,7 @@ bool APAI_DB_Adapter::addProbes(const vector<int> &_ids, const vector<QString> &
     return ret_ok;
 }
 
-bool APAI_DB_Adapter::addMode(const int &_id, const QString &_name) {
+bool APNI_DB_Adapter::addMode(const int &_id, const QString &_name) {
     bool ret_ok = false;
     ret_ok = beginTrans();
     if (!ret_ok) {
@@ -200,7 +200,7 @@ bool APAI_DB_Adapter::addMode(const int &_id, const QString &_name) {
     return ret_ok;
 }
 
-bool APAI_DB_Adapter::addModes(const vector<int> &_ids, const vector<QString> &_names) {
+bool APNI_DB_Adapter::addModes(const vector<int> &_ids, const vector<QString> &_names) {
     bool ret_ok = false;
     const int len_id = _ids.size();
     const int len_name = _names.size();
@@ -228,7 +228,7 @@ bool APAI_DB_Adapter::addModes(const vector<int> &_ids, const vector<QString> &_
     return ret_ok;
 }
 
-bool APAI_DB_Adapter::addRow(void *object_item, int table_type) {
+bool APNI_DB_Adapter::addRow(void *object_item, int table_type) {
     bool ret_ok = false;
     ret_ok = beginTrans();
     if (!ret_ok) {
@@ -272,15 +272,15 @@ bool APAI_DB_Adapter::addRow(void *object_item, int table_type) {
     return ret_ok;
 }
 
-inline bool APAI_DB_Adapter::addUtpRow(const UTPs &utp) { return addRow((void *)(&utp), static_cast<int>(TABLE_UTP)); }
+inline bool APNI_DB_Adapter::addUtpRow(const UTPs &utp) { return addRow((void *)(&utp), static_cast<int>(TABLE_UTP)); }
 
-inline bool APAI_DB_Adapter::addMtpRow(const MTPs &mtp) { return addRow((void *)(&mtp), static_cast<int>(TABLE_MTP)); }
+inline bool APNI_DB_Adapter::addMtpRow(const MTPs &mtp) { return addRow((void *)(&mtp), static_cast<int>(TABLE_MTP)); }
 
-inline bool APAI_DB_Adapter::addUtpiRow(const UTPInfos &utpinfo) {
+inline bool APNI_DB_Adapter::addUtpiRow(const UTPInfos &utpinfo) {
     return addRow((void *)(&utpinfo), static_cast<int>(TABLE_UTPI));
 }
 
-bool APAI_DB_Adapter::addRow(const int &_id, const QString &_name, int table_type) {
+bool APNI_DB_Adapter::addRow(const int &_id, const QString &_name, int table_type) {
     bool ret_ok = false;
     ret_ok = beginTrans();
     if (!ret_ok) {
@@ -336,7 +336,7 @@ bool APAI_DB_Adapter::addRow(const int &_id, const QString &_name, int table_typ
     return ret_ok;
 }
 
-bool APAI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) {
+bool APNI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) {
     QStringList _row = _rows[0];
     bool ret_ok = false;
     int err_count = 0;
@@ -758,4 +758,4 @@ bool APAI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) 
     return ret_ok;
 }
 
-bool APAI_DB_Adapter::addModes(const vector<QStringList> &_rows) { return addRows(_rows, TABLE_MODE); }
+bool APNI_DB_Adapter::addModes(const vector<QStringList> &_rows) { return addRows(_rows, TABLE_MODE); }

@@ -9,7 +9,7 @@
 
 #include "database_create.h" // create_database
 
-#include "apai_db_adapter.h"
+#include "apni_db_adapter.h"
 //#include "person-odb.hxx"
 #include "person.h"
 
@@ -31,7 +31,7 @@
 
 bool generate_db() {
     bool success[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {false};
-    APAI_DB_Adapter ada("apai-gen.db");
+    APNI_DB_Adapter ada("apai-gen.db");
     ada.addVersion("init by eton when testing, generate all db with datas.");
 
     QString csv_files[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {

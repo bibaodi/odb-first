@@ -8,7 +8,7 @@ Window {
     height: 580
     visible: true
     color: "#77c08e"
-    title: qsTr("APaI Measure Tool")
+    title: qsTr("APnI Measure Tool")
 
     Column {
         id: id_column_0

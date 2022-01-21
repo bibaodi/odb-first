@@ -5,7 +5,7 @@
 #include <typeinfo>
 #include <vector>
 
-#define DB_SCHEMA_NAME "APaI"
+#define DB_SCHEMA_NAME "APnI"
 #define APAI_DB_VERSION 1
 
 // 0.cid [0,1...]; 1.name [str]; 2.type [str]; 3.notnull[0/1]; 4. dflt_value; 5.pk[]0/1;
@@ -116,9 +116,9 @@ class UTPs;
 class MTPs;
 class UTPInfos;
 
-class APAI_DB_Adapter : public ESIDatabase {
+class APNI_DB_Adapter : public ESIDatabase {
   public:
-    APAI_DB_Adapter(const QString &file_name);
+    APNI_DB_Adapter(const QString &file_name);
 
     bool queryTableInfo(const QString &sql, QList<TableInfo> &);
     bool isHeaderMatch(const QStringList &csvHeaders, int);
