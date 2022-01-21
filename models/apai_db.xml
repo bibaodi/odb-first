@@ -99,7 +99,6 @@
     <table name="MTPs" kind="object">
       <column name="id_mtp" type="INTEGER" null="false"/>
       <column name="id_utp" type="INTEGER" null="false" default="0"/>
-      <column name="T" type="INTEGER" null="false" default="0"/>
       <column name="mi" type="REAL" null="true" default="0"/>
       <column name="mi_inv" type="REAL" null="true" default="0"/>
       <column name="pii_0_u" type="REAL" null="true" default="0"/>
@@ -148,6 +147,7 @@
       <column name="minW3ITA3_mW" type="REAL" null="true" default="0"/>
       <column name="ticas_s" type="REAL" null="true" default="0"/>
       <column name="tisas_s" type="REAL" null="true" default="0"/>
+      <column name="T" type="REAL" null="true" default="0"/>
       <primary-key>
         <column name="id_mtp"/>
       </primary-key>

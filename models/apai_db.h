@@ -149,7 +149,6 @@ struct MTPs {
 #pragma db id
     int id_mtp;
     int id_utp;
-    int T;
     double mi;
     double mi_inv;
     double pii_0_u;

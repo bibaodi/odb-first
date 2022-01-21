@@ -8,7 +8,7 @@ Window {
     height: 580
     visible: true
     color: "#77c08e"
-    title: qsTr("APAI Measure Tool")
+    title: qsTr("APaI Measure Tool")
 
     Column {
         id: id_column_0
@@ -24,12 +24,12 @@ Window {
             height: 50
             spacing: id_grid_params.columnSpacing
 
-            ParamSelectItem {
+            ParamInputItem {
                 id: id_comboBox_utp
                 width: id_location_item.width
                 height: parent.height
                 param_label: "utp_id"
-                param_unit: " "
+                param_unit: "id"
             }
             Rectangle {
                 border.color: "green"
@@ -63,13 +63,15 @@ Window {
             ParamInputItem {
                 id: id_location_item
                 param_label: "Location"
-                param_unit: "MM"
+                param_unit: "mm"
                 height: parent.height / 3
                 width: parent.width / 4
             }
             ParamInputItem {
                 param_label: "NB_ele"
-                param_unit: "/"
+                param_unit: "<600"
+                value_min: 1
+                value_max: 600
                 limit_len: 3
                 height: parent.height / 3
                 width: parent.width / 4
@@ -85,16 +87,16 @@ Window {
             }
             ParamInputItem {
                 param_label: "freq"
-                param_unit: "mHZ"
+                param_unit: "MHz"
                 height: parent.height / 3
                 width: parent.width / 4
             }
             ParamInputItem {
                 param_label: "Nb_half_cycle"
                 value_min: 1
-                value_max: 100
-                limit_len: 2
-                param_unit: "1-100"
+                value_max: 2000
+                limit_len: 4
+                param_unit: "<2k"
                 height: parent.height / 3
                 width: parent.width / 4
             }
@@ -139,7 +141,7 @@ Window {
 
             ParamInputItem {
                 param_label: "Voltage"
-                param_unit: "mV"
+                param_unit: "V"
                 value_min: 1
                 value_max: 200
                 limit_len: 5
@@ -148,7 +150,7 @@ Window {
             }
             ParamInputItem {
                 param_label: "PRF"
-                param_unit: "mHZ"
+                param_unit: "Hz"
                 value_min: 1
                 value_max: 200
                 limit_len: 5
@@ -200,7 +202,7 @@ Window {
             RoundButton {
                 id: roundButton2
                 width: id_button_start.width
-                text: "save|add"
+                text: "add"
             }
 
             RoundButton {
