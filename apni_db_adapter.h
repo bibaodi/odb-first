@@ -117,9 +117,12 @@ class MTPs;
 class UTPInfos;
 
 class APNI_DB_Adapter : public ESIDatabase {
-  public:
+  private:
     APNI_DB_Adapter(const QString &file_name);
+    explicit APNI_DB_Adapter();
 
+  public:
+    static APNI_DB_Adapter *get_instance();
     bool queryTableInfo(const QString &sql, QList<TableInfo> &);
     bool isHeaderMatch(const QStringList &csvHeaders, int);
     void addVersion(const QString &msg);

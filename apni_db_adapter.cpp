@@ -3,7 +3,9 @@
 #include "apni_db.h"
 #include <QTextCodec>
 #include <iostream>
+#include <odb/database.hxx>
 #include <odb/sqlite/exceptions.hxx>
+#include <odb/transaction.hxx>
 #include <sstream>
 #include <stdexcept>
 #include <string>
@@ -47,6 +49,11 @@ const QString APNI_DB_Adapter::MTP_ColNames[] = {
     "deq4MI",       "deq4TIB",        "zB3",      "w01_mW",      "zBP_cm",      "z1_cm",
     "minW3ITA3_mW", "ticas_s",        "tisas_s",
 };
+
+APNI_DB_Adapter *APNI_DB_Adapter::get_instance() {
+    static APNI_DB_Adapter obj("apni-gen.db");
+    return &obj;
+}
 
 APNI_DB_Adapter::APNI_DB_Adapter(const QString &file_name) : ESIDatabase(file_name, DB_SCHEMA_NAME, APnI_DB_VERSION) {}
 

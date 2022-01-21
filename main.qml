@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
+import EsiModule 1.0
 
 Window {
     id: id_window0
@@ -9,6 +10,10 @@ Window {
     visible: true
     color: "#77c08e"
     title: qsTr("APnI Measure Tool")
+
+    APnI_GuiAdapter {
+        id: id_apni_adapter
+    }
 
     Column {
         id: id_column_0
@@ -233,6 +238,9 @@ Window {
                 }
             }
         }
+    }
+    Component.onCompleted: {
+        id_apni_adapter.getUtpDatasById(1)
     }
 }
 

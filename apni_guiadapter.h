@@ -3,14 +3,16 @@
 
 #include <QObject>
 
-class GuiAdapter : public QObject {
+class APNI_DB_Adapter;
+class APnIGuiAdapter : public QObject {
     Q_OBJECT
   public:
-    explicit GuiAdapter(QObject *parent = nullptr);
+    explicit APnIGuiAdapter(QObject *parent = nullptr);
     Q_INVOKABLE int getUtpDatasById(int utp_id);
 
   private:
     bool connect2db();
+    APNI_DB_Adapter *m_db;
 
   signals:
 };

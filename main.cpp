@@ -21,6 +21,7 @@
 #include "stringdata.h"
 #include "writer.h"
 //--csv.begin.end
+#include "apni_guiadapter.h"
 #include <QFile>
 #include <vector>
 
@@ -31,12 +32,13 @@
 
 bool generate_db() {
     bool success[APnI_STATIC_TABLE_COUNTS + APnI_DYNAMIC_TABLE_COUNTS] = {false};
-    APNI_DB_Adapter ada("apni-gen.db");
-    if (ada.init_db(APnI_DB_VERSION) < 1) {
+    // APNI_DB_Adapter ada("apni-gen.db");
+    APNI_DB_Adapter *ada = APNI_DB_Adapter::get_instance();
+    if (ada->init_db(APnI_DB_VERSION) < 1) {
         qDebug() << "already created.";
         return success;
     }
-    ada.addVersion("init by eton when testing, generate all db with datas.");
+    ada->addVersion("init by eton when testing, generate all db with datas.");
 
     QString csv_files[APnI_STATIC_TABLE_COUNTS + APnI_DYNAMIC_TABLE_COUNTS] = {
         QStringLiteral("probes"), QStringLiteral("modes"), QStringLiteral("apodizations"), QStringLiteral("pulses"),
@@ -61,7 +63,7 @@ bool generate_db() {
             success[i] = false;
         } else {
             std::vector<QStringList> _rows = csv_datas.toVector().toStdVector();
-            success[i] = ada.addRows(_rows, i);
+            success[i] = ada->addRows(_rows, i);
         }
         qDebug() << i << ": success=" << success[i];
     }
@@ -74,6 +76,7 @@ bool generate_db() {
 }
 
 int main(int argc, char *argv[]) {
+    qmlRegisterType<APnIGuiAdapter>("EsiModule", 1, 0, "APnI_GuiAdapter");
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));
