@@ -1,4 +1,4 @@
-// file      : hello/person.h
+// file      : hello/Person.h
 // copyright : not copyrighted - public domain
 
 #ifndef PERSON_HXX
@@ -10,9 +10,9 @@
 #include <odb/core.hxx>
 
 #pragma db object
-class person {
+class Person {
   public:
-    person(const std::string &first, const std::string &last, unsigned short age)
+    Person(const std::string &first, const std::string &last, unsigned short age)
         : first_(first), last_(last), age_(age) {}
 
     const std::string &first() const { return first_; }
@@ -26,7 +26,7 @@ class person {
   private:
     friend class odb::access;
 
-    person() {}
+    Person() {}
 
 #pragma db id auto
     unsigned long id_;
@@ -36,15 +36,15 @@ class person {
     unsigned short age_;
 };
 
-#pragma db view object(person)
+#pragma db view object(Person)
 struct person_stat {
-#pragma db column("count(" + person::id_ + ")")
+#pragma db column("count(" + Person::id_ + ")")
     std::size_t count;
 
-#pragma db column("min(" + person::age_ + ")")
+#pragma db column("min(" + Person::age_ + ")")
     unsigned short min_age;
 
-#pragma db column("max(" + person::age_ + ")")
+#pragma db column("max(" + Person::age_ + ")")
     unsigned short max_age;
 };
 

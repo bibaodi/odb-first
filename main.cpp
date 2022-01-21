@@ -22,35 +22,35 @@ int main_db(int argc, char *argv[]) {
 
         unsigned long john_id, joe_id;
 
-        // Create a few persistent person objects.
+        // Create a few persistent Person objects.
         //
-        {
-            person john("John", "Doe", 33);
-            person jane("Jane", "Doe", 32);
-            person joe("Joe", "Dirt", 30);
+        //        {
+        //            Person john("John", "Doe", 33);
+        //            Person jane("Jane", "Doe", 32);
+        //            Person joe("Joe", "Dirt", 30);
 
-            transaction t(db->begin());
+        //            transaction t(db->begin());
 
-            // Make objects persistent and save their ids for later use.
-            //
-            john_id = db->persist(john);
-            db->persist(jane);
-            joe_id = db->persist(joe);
+        //            // Make objects persistent and save their ids for later use.
+        //            //
+        //            john_id = db->persist(john);
+        //            db->persist(jane);
+        //            joe_id = db->persist(joe);
 
-            t.commit();
-        }
+        //            t.commit();
+        //        }
 
-        typedef odb::query<person> query;
-        typedef odb::result<person> result;
+        //        typedef odb::query<Person> query;
+        //        typedef odb::result<Person> result;
 
         // Say hello to those over 30.
         //
         {
             transaction t(db->begin());
 
-            result r(db->query<person>(query::age > 30));
+            odb::result<Person> r(db->query<Person>(odb::query<Person>::age > 30));
 
-            for (result::iterator i(r.begin()); i != r.end(); ++i) {
+            for (odb::result<Person>::iterator i(r.begin()); i != r.end(); ++i) {
                 cout << "Hello, " << i->first() << " " << i->last() << "!" << endl;
             }
 
@@ -62,7 +62,7 @@ int main_db(int argc, char *argv[]) {
         {
             transaction t(db->begin());
 
-            auto_ptr<person> joe(db->load<person>(joe_id));
+            auto_ptr<Person> joe(db->load<Person>(joe_id));
             joe->age(joe->age() + 1);
             db->update(*joe);
 
@@ -79,8 +79,8 @@ int main_db(int argc, char *argv[]) {
           // database so we use the query_one() shortcut instead of
           // manually iterating over the result returned by query().
           //
-          auto_ptr<person> joe (
-            db->query_one<person> (query::first == "Joe" &&
+          auto_ptr<Person> joe (
+            db->query_one<Person> (query::first == "Joe" &&
                                    query::last == "Dirt"));
 
           if (joe.get () != 0)
@@ -115,7 +115,7 @@ int main_db(int argc, char *argv[]) {
         //
         {
             transaction t(db->begin());
-            db->erase<person>(john_id);
+            db->erase<Person>(john_id);
             t.commit();
         }
     } catch (const odb::exception &e) {
