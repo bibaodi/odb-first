@@ -27,11 +27,11 @@
 #define APAI_STATIC_TABLE_COUNTS 4
 #define APAI_DYNAMIC_TABLE_COUNTS 3 + 1
 
-#define DEBUG_UI 1
+#define DEBUG_UI 0
 
 bool generate_db() {
     bool success[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {false};
-    APNI_DB_Adapter ada("apai-gen.db");
+    APNI_DB_Adapter ada("apni-gen.db");
     ada.addVersion("init by eton when testing, generate all db with datas.");
 
     QString csv_files[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {
@@ -82,6 +82,9 @@ int main(int argc, char *argv[]) {
         Qt::QueuedConnection);
     engine.load(url);
     if (!DEBUG_UI) {
+        //        int n = 0;
+        //        char *argv0[1] = {nullptr};
+        //        create_database(n, argv0);
         bool db_ok = generate_db();
         if (!db_ok) {
             qDebug() << "Data base generate not successful.";

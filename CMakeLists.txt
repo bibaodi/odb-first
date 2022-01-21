@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-set(TARGET apai_client)
+set(TARGET apni_client)
 project(${TARGET} LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
@@ -34,9 +34,10 @@ file(GLOB OdbCMake_ODB_HEADERS
 message(STATUS "debug:" ${OdbCMake_ODB_HEADERS})
 message(STATUS "debug::qt include:" $ENV{QT_INCLUDE_DIR})
 
+###!!!SCHEMA_NAME APnI should same with src's string.
 odb_compile(OdbCMake_OUTPUTS FILES ${OdbCMake_ODB_HEADERS} DB sqlite
     GENERATE_QUERY GENERATE_SESSION GENERATE_PREPARED GENERATE_SCHEMA
-    SCHEMA_NAME APaI
+    SCHEMA_NAME APnI
     STANDARD c++17
     X_CPP_OPTION -fPIC
     PROFILE qt

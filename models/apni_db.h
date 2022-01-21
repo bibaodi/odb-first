@@ -1,5 +1,5 @@
-#ifndef APAI_DB_H
-#define APAI_DB_H
+#ifndef APNI_DB_H
+#define APNI_DB_H
 
 #include <QtCore/QString>
 #include <odb/core.hxx>
@@ -199,4 +199,4 @@ struct MTPs {
     double tisas_s;
     double T; // steven add this for temperature --eton@22/02/21
 };
-#endif // APAI_DB_H
+#endif // APNI_DB_H

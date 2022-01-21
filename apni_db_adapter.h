@@ -5,7 +5,7 @@
 #include <typeinfo>
 #include <vector>
 
-#define DB_SCHEMA_NAME "APnI"
+#define DB_SCHEMA_NAME "APnI" ///!!!###!!!SCHEMA_NAME APnI should same with CMakefile's .
 #define APAI_DB_VERSION 1
 
 // 0.cid [0,1...]; 1.name [str]; 2.type [str]; 3.notnull[0/1]; 4. dflt_value; 5.pk[]0/1;

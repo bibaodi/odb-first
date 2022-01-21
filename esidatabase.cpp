@@ -10,6 +10,7 @@ ESIDatabase::ESIDatabase(const QString &db_file, const QString &schema_name, int
     m_dbHandler = this->connection()->handle();
     m_codec = QTextCodec::codecForName("UTF-8");
     //检查数据库文件是否存在
+    // shared_ptr<database> db(new odb::sqlite::database(argc, argv, false, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE))
     odb::database::schema_version_type db_version = 0;
     if (isTableExist(SCHEMA_VERTION_TABLE)) {
         db_version = this->schema_version(schema_name.toStdString());
@@ -17,16 +18,14 @@ ESIDatabase::ESIDatabase(const QString &db_file, const QString &schema_name, int
     }
     //数据库文件不存在，根据schema创建
     if (0 == db_version) {
-        //对SQLITE支持有个BUG
-        this->connection()->execute("PRAGMA foreign_keys=OFF");
-        transaction tr(this->begin());
+        connection_ptr c(connection());
+        c->execute("PRAGMA foreign_keys=OFF");
+        transaction t(c->begin());
         schema_catalog::create_schema(*this, schema_name.toStdString());
-        tr.commit();
-        this->connection()->execute("PRAGMA foreign_keys=ON");
-    }
-    //数据库版本不一致
-    else {
-        //升级
+        t.commit();
+        c->execute("PRAGMA foreign_keys=ON");
+    } else {
+        //数据库版本不一致-升级
         if (cur_version > db_version) {
             upgrade(cur_version, db_version, schema_name);
         }

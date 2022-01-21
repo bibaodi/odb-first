@@ -1,4 +1,4 @@
-<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="APaI" version="1">
+<changelog xmlns="http://www.codesynthesis.com/xmlns/odb/changelog" database="sqlite" schema-name="APnI" version="1">
   <model version="1">
     <table name="Probes" kind="object">
       <column name="id_probe" type="INTEGER" null="false"/>
