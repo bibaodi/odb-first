@@ -48,7 +48,7 @@ const QString APNI_DB_Adapter::MTP_ColNames[] = {
     "minW3ITA3_mW", "ticas_s",        "tisas_s",
 };
 
-APNI_DB_Adapter::APNI_DB_Adapter(const QString &file_name) : ESIDatabase(file_name, DB_SCHEMA_NAME, APAI_DB_VERSION) {}
+APNI_DB_Adapter::APNI_DB_Adapter(const QString &file_name) : ESIDatabase(file_name, DB_SCHEMA_NAME, APnI_DB_VERSION) {}
 
 bool APNI_DB_Adapter::isHeaderMatch(const QStringList &csvHeaders, int table_type) {
     qDebug() << "\nisHeaderMatch >>" << TableNames[table_type];

@@ -15,6 +15,7 @@ class ESIDatabase : public odb::sqlite::database {
     bool commitTrans();
     const QTextCodec *get_codec(void) { return m_codec; }
     sqlite3 *get_handler(void) { return m_dbHandler; }
+    int init_db(int _version);
 
   private:
     bool isTableExist(const QString &table_name);
@@ -31,6 +32,8 @@ class ESIDatabase : public odb::sqlite::database {
     int m_preDBVersion;
     bool m_update = false;
     int m_lstCommitResult = SQLITE_OK;
+    bool m_available;
+    QString m_schemaName;
 };
 
 #endif // ESIDATABASE_H

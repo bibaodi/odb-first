@@ -24,27 +24,31 @@
 #include <QFile>
 #include <vector>
 
-#define APAI_STATIC_TABLE_COUNTS 4
-#define APAI_DYNAMIC_TABLE_COUNTS 3 + 1
+#define APnI_STATIC_TABLE_COUNTS 4
+#define APnI_DYNAMIC_TABLE_COUNTS 3 + 1
 
 #define DEBUG_UI 0
 
 bool generate_db() {
-    bool success[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {false};
+    bool success[APnI_STATIC_TABLE_COUNTS + APnI_DYNAMIC_TABLE_COUNTS] = {false};
     APNI_DB_Adapter ada("apni-gen.db");
+    if (ada.init_db(APnI_DB_VERSION) < 1) {
+        qDebug() << "already created.";
+        return success;
+    }
     ada.addVersion("init by eton when testing, generate all db with datas.");
 
-    QString csv_files[APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS] = {
+    QString csv_files[APnI_STATIC_TABLE_COUNTS + APnI_DYNAMIC_TABLE_COUNTS] = {
         QStringLiteral("probes"), QStringLiteral("modes"), QStringLiteral("apodizations"), QStringLiteral("pulses"),
         QLatin1String("null"),    QStringLiteral("UTPs"),  QStringLiteral("MTPs"),         QStringLiteral("UTP_Infos")};
 
-    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS; i++) {
+    for (int i = 0; i < APnI_STATIC_TABLE_COUNTS + APnI_DYNAMIC_TABLE_COUNTS; i++) {
         QFile csvfile(QString("/tmp/%1.csv").arg(csv_files[i]));
         if (!csvfile.exists()) {
             qDebug() << "file Not exist. please ensure all exist~" << csvfile.fileName();
         }
     }
-    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS; i++) {
+    for (int i = 0; i < APnI_STATIC_TABLE_COUNTS + APnI_DYNAMIC_TABLE_COUNTS; i++) {
         if (csv_files[i].contains("null", Qt::CaseInsensitive)) {
             success[i] = true;
             continue;
@@ -61,7 +65,7 @@ bool generate_db() {
         }
         qDebug() << i << ": success=" << success[i];
     }
-    for (int i = 0; i < APAI_STATIC_TABLE_COUNTS + APAI_DYNAMIC_TABLE_COUNTS; i++) {
+    for (int i = 0; i < APnI_STATIC_TABLE_COUNTS + APnI_DYNAMIC_TABLE_COUNTS; i++) {
         if (!success[i]) {
             return false;
         }

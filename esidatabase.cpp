@@ -6,14 +6,21 @@
 #include <odb/sqlite/exceptions.hxx>
 const char *SCHEMA_VERTION_TABLE = "schema_version";
 ESIDatabase::ESIDatabase(const QString &db_file, const QString &schema_name, int cur_version)
-    : odb::sqlite::database(db_file.toStdString(), SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE), m_dbFileName(db_file) {
+    : m_available(false), odb::sqlite::database(db_file.toStdString(), SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE),
+      m_dbFileName(db_file), m_schemaName(schema_name) {
     m_dbHandler = this->connection()->handle();
     m_codec = QTextCodec::codecForName("UTF-8");
-    //检查数据库文件是否存在
-    // shared_ptr<database> db(new odb::sqlite::database(argc, argv, false, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE))
+}
+
+ESIDatabase::~ESIDatabase() {
+    deleteDbTrans();
+    sqlite3_close(m_dbHandler);
+}
+
+int ESIDatabase::init_db(int cur_version) {
     odb::database::schema_version_type db_version = 0;
     if (isTableExist(SCHEMA_VERTION_TABLE)) {
-        db_version = this->schema_version(schema_name.toStdString());
+        db_version = this->schema_version(m_schemaName.toStdString());
         m_preDBVersion = db_version;
     }
     //数据库文件不存在，根据schema创建
@@ -21,24 +28,20 @@ ESIDatabase::ESIDatabase(const QString &db_file, const QString &schema_name, int
         connection_ptr c(connection());
         c->execute("PRAGMA foreign_keys=OFF");
         transaction t(c->begin());
-        schema_catalog::create_schema(*this, schema_name.toStdString());
+        schema_catalog::create_schema(*this, m_schemaName.toStdString());
         t.commit();
         c->execute("PRAGMA foreign_keys=ON");
+        m_available = true;
+        return 1;
     } else {
-        //数据库版本不一致-升级
         if (cur_version > db_version) {
-            upgrade(cur_version, db_version, schema_name);
+            upgrade(cur_version, db_version, m_schemaName);
+        } else if (cur_version < db_version) {
+            degrade(cur_version, db_version, m_schemaName);
         }
-        //降级
-        else if (cur_version < db_version) {
-            degrade(cur_version, db_version, schema_name);
-        }
+        m_available = true;
+        return 0;
     }
-}
-
-ESIDatabase::~ESIDatabase() {
-    deleteDbTrans();
-    sqlite3_close(m_dbHandler);
 }
 
 void ESIDatabase::upgrade(int cur_version, int db_version, const QString &schema_name) {

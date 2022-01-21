@@ -1,12 +1,12 @@
-#ifndef APAI_DB_ADAPTER_H
-#define APAI_DB_ADAPTER_H
+#ifndef APnI_DB_ADAPTER_H
+#define APnI_DB_ADAPTER_H
 #include "esidatabase.h"
 #include <QDebug>
 #include <typeinfo>
 #include <vector>
 
 #define DB_SCHEMA_NAME "APnI" ///!!!###!!!SCHEMA_NAME APnI should same with CMakefile's .
-#define APAI_DB_VERSION 1
+#define APnI_DB_VERSION 1
 
 // 0.cid [0,1...]; 1.name [str]; 2.type [str]; 3.notnull[0/1]; 4. dflt_value; 5.pk[]0/1;
 enum class SQLITE_TABLE_INFO_IDX { CID = 0, NAME, TYPE, NOTNULL, DFLT_VALUE, PK };
@@ -154,4 +154,4 @@ class APNI_DB_Adapter : public ESIDatabase {
     static const QString MTP_ColNames[];
 };
 
-#endif // APAI_DB_ADAPTER_H
+#endif // APnI_DB_ADAPTER_H
