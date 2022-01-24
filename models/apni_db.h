@@ -89,7 +89,7 @@ class Versions {
 // in ODB SQLite Type Mapping, only float and double default is null others are not null. so change value program to
 // not_null and make default=0;
 #pragma db object no_id
-struct UTPs {
+class UTPs {
   public:
     UTPs(bool manipulated) : manipulated(manipulated) {}
 #pragma db index("utp_id_utp_idx") unique method("BTREE") member(id_utp, "DESC")
@@ -122,10 +122,15 @@ struct UTPs {
 #pragma db not_null
     double deltaT;
     bool manipulated;
+
+  private:
+    friend class odb::access;
+    UTPs() {}
 };
 
 #pragma db object
 struct UTPInfos {
+  public:
 #pragma db id
     int id_utp;
 #pragma db not_null
@@ -141,11 +146,15 @@ struct UTPInfos {
     QString presets;
     double tic;
     QString settings;
+
+  private:
+    friend class odb::access;
 };
 
 #pragma db not_null
 #pragma db object
-struct MTPs {
+class MTPs {
+  public:
 #pragma db id
     int id_mtp;
     int id_utp;
@@ -198,5 +207,7 @@ struct MTPs {
     double ticas_s;
     double tisas_s;
     double T; // steven add this for temperature --eton@22/02/21
+  private:
+    friend class odb::access;
 };
 #endif // APNI_DB_H

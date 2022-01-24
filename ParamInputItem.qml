@@ -50,6 +50,13 @@ Rectangle {
             }
         }
     }
+
+    function get_value() {
+        if (!id_input.text) {
+            return 0
+        }
+        return id_input.text
+    }
 }
 
 /*##^##

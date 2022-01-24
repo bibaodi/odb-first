@@ -137,6 +137,8 @@ class APNI_DB_Adapter : public ESIDatabase {
     bool addModes(const vector<int> &_id, const vector<QString> &_name);
     bool addModes(const vector<QStringList> &_rows);
     bool addRows(const vector<QStringList> &_rows, int table_type);
+    bool isAvailable();
+    bool lookupUtps(int _id);
 
   public:
     enum TABLE_TYPE {

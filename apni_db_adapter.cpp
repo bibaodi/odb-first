@@ -11,6 +11,8 @@
 #include <string>
 #include <string_view>
 
+using namespace odb::core;
+
 const QString APNI_DB_Adapter::TableNames[] = {
     QStringLiteral("Probes"),     QStringLiteral("Modes"),    QStringLiteral("Apodizations"),
     QStringLiteral("PulseTypes"), QStringLiteral("null"),     QStringLiteral("UTPs"),
@@ -56,6 +58,8 @@ APNI_DB_Adapter *APNI_DB_Adapter::get_instance() {
 }
 
 APNI_DB_Adapter::APNI_DB_Adapter(const QString &file_name) : ESIDatabase(file_name, DB_SCHEMA_NAME, APnI_DB_VERSION) {}
+
+bool APNI_DB_Adapter::isAvailable() { return m_available; }
 
 bool APNI_DB_Adapter::isHeaderMatch(const QStringList &csvHeaders, int table_type) {
     qDebug() << "\nisHeaderMatch >>" << TableNames[table_type];
@@ -766,3 +770,23 @@ bool APNI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) 
 }
 
 bool APNI_DB_Adapter::addModes(const vector<QStringList> &_rows) { return addRows(_rows, TABLE_MODE); }
+
+bool APNI_DB_Adapter::lookupUtps(int utp_id) {
+    bool ret_ok = false;
+    odb::core::transaction t(this->begin());
+    try {
+        odb::result<UTPs> utp_rets(query<UTPs>(odb::query<UTPs>::id_utp >= utp_id));
+        int n = utp_rets.size();
+        if (n > 0) {
+            for (odb::result<UTPs>::iterator i(utp_rets.begin()); i != utp_rets.end(); i++) {
+                qDebug() << "look up UTPs:" << i->id_utp;
+            }
+        }
+    } catch (odb::exception &e) {
+        qDebug() << "look up UTPs failed." << e.what();
+    }
+
+    t.commit();
+
+    return ret_ok;
+}

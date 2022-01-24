@@ -32,8 +32,10 @@ class ESIDatabase : public odb::sqlite::database {
     int m_preDBVersion;
     bool m_update = false;
     int m_lstCommitResult = SQLITE_OK;
-    bool m_available;
     QString m_schemaName;
+
+  protected:
+    bool m_available;
 };
 
 #endif // ESIDATABASE_H

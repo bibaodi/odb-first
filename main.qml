@@ -55,6 +55,11 @@ Window {
                 id: button
                 width: id_location_item.width
                 text: qsTr("Import")
+                onClicked: {
+                    var utp_id = id_comboBox_utp.get_value()
+                    console.log(text, ":clicked: ", utp_id)
+                    id_apni_adapter.getUtpDatasById(1)
+                }
             }
         }
 

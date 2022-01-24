@@ -3,24 +3,29 @@
 #include <odb/database.hxx>
 #include <odb/transaction.hxx>
 
+#include "apni_db-odb.hxx"
+#include "apni_db.h"
 #include <QDebug>
 
-APnIGuiAdapter::APnIGuiAdapter(QObject *parent) : QObject(parent), m_db(nullptr) { qDebug() << "APnIGuiAdapter init~"; }
+using namespace odb::core;
+
+APnIGuiAdapter::APnIGuiAdapter(QObject *parent) : QObject(parent), m_db(nullptr) {
+    qDebug() << "APnIGuiAdapter init~";
+    connect2db();
+}
 
 int APnIGuiAdapter::getUtpDatasById(int utp_id) {
     qDebug() << "APnIGuiAdapter: getUtpDatasById" << utp_id;
-    // odb::query<UTPs> utp(query::id_utp == utp_id);
-    odb::result<UTPs> utp_rets(m_db->query<UTPs>(odb::query<UTPs>::id_utp == utp_id));
-    int n = utp_rets.size();
-    if (n > 0) {
-        foreach (UTPs &item, utp_rets) { qDebug() << item.id; }
+    // odb::query<Probes> _query(query::id_probe == utp_id);
+    if (m_db && m_db->isAvailable()) {
+        m_db->lookupUtps(utp_id);
     }
     return 0;
 }
 
 bool APnIGuiAdapter::connect2db() {
     m_db = APNI_DB_Adapter::get_instance();
-    if (m_db->m_available) {
+    if (m_db->isAvailable()) {
         return true;
     }
     return false;
