@@ -778,17 +778,21 @@ bool APNI_DB_Adapter::lookupUtps(int utp_id) {
         // SQLITE_OPEN_CREATE);
         odb::core::transaction t(begin());
         odb::result<UTPs> utp_rets;
-        utp_rets = query<UTPs>(odb::query<UTPs>::id_utp >= utp_id);
+        utp_rets = query<UTPs>(odb::query<UTPs>::id_utp == utp_id);
         //        utp_rets.cache();
         //        int n = utp_rets.size();
         //        if (n < 0) {
         //            return ret_ok;
         //        }
+        int n = 0;
         for (odb::result<UTPs>::iterator i(utp_rets.begin()); i != utp_rets.end(); i++) {
-            qDebug() << "look up UTPs:" << i->id_utp;
+            qDebug() << "look up UTPs:" << i->id_utp << i->id_pulse_type << i->id_probe << i->id_mode
+                     << i->id_apodization << i->id_mtp;
+            n++;
         }
-
         t.commit();
+        if (n)
+            return true;
     } catch (odb::exception &e) {
         qDebug() << "look up UTPs failed." << e.what();
     }

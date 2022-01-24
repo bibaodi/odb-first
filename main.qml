@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Dialogs 1.2
 import EsiModule 1.0
 
 Window {
@@ -58,7 +59,12 @@ Window {
                 onClicked: {
                     var utp_id = id_comboBox_utp.get_value()
                     console.log(text, ":clicked: ", utp_id)
-                    id_apni_adapter.getUtpDatasById(1)
+                    var succ = id_apni_adapter.getUtpDatasById(1)
+                    if (!succ) {
+                        id_window0.alert(3000)
+                        id_msg_dialog.alert("UTP id not found.")
+                        // id_msg_dialog.open()
+                    }
                 }
             }
         }
@@ -247,11 +253,19 @@ Window {
     Component.onCompleted: {
         id_apni_adapter.getUtpDatasById(1)
     }
-}
 
-/*##^##
-Designer {
-    D{i:0;autoSize:true;height:480;width:640}
+    MessageDialog {
+        id: id_msg_dialog
+        title: "APnI Error"
+        text: "APni Message box."
+        onAccepted: {
+            visible = false
+            //Qt.quit()
+        }
+        Component.onCompleted: visible = false
+        function alert(msg) {
+            text = msg + "\nplease try again~"
+            visible = true
+        }
+    }
 }
-##^##*/
-
