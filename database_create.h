@@ -48,12 +48,13 @@ inline std::auto_ptr<odb::database> create_database(int &argc, char *argv[]) {
         connection_ptr c(db->connection());
 
         c->execute("PRAGMA foreign_keys=OFF");
+        bool exist = schema_catalog::exists(*db, "etons");
+        if (!exist) {
+            transaction t(c->begin());
+            schema_catalog::create_schema(*db, "etons", false); // if exist then ignore create.
 
-        transaction t(c->begin());
-        schema_catalog::create_schema(*db, "etons");
-
-        t.commit();
-
+            t.commit();
+        }
         c->execute("PRAGMA foreign_keys=ON");
     }
 #endif

@@ -24,21 +24,22 @@ int main_db(int argc, char *argv[]) {
 
         // Create a few persistent Person objects.
         //
-        //        {
-        //            Person john("John", "Doe", 33);
-        //            Person jane("Jane", "Doe", 32);
-        //            Person joe("Joe", "Dirt", 30);
+        odb::schema_version ver = db->schema_version("etons");
+        if (!ver) {
+            Person john("John", "Doe", 33);
+            Person jane("Jane", "Doe", 32);
+            Person joe("Joe", "Dirt", 30);
 
-        //            transaction t(db->begin());
+            transaction t(db->begin());
 
-        //            // Make objects persistent and save their ids for later use.
-        //            //
-        //            john_id = db->persist(john);
-        //            db->persist(jane);
-        //            joe_id = db->persist(joe);
+            // Make objects persistent and save their ids for later use.
+            //
+            john_id = db->persist(john);
+            db->persist(jane);
+            joe_id = db->persist(joe);
 
-        //            t.commit();
-        //        }
+            t.commit();
+        }
 
         //        typedef odb::query<Person> query;
         //        typedef odb::result<Person> result;

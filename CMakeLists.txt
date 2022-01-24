@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-set(TARGET apai)
+set(TARGET apni_client)
 project(${TARGET} LANGUAGES CXX)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
