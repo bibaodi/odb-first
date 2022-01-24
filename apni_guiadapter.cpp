@@ -25,7 +25,9 @@ bool APnIGuiAdapter::update_utp_data(UTPs &utp) {
     QObject *qitem;
     qitem = m_win->findChild<QObject *>("ProbeName");
     if (qitem) {
-        qitem->setProperty("text", APNI_DB_Adapter::ProbesNames[utp.id_probe]);
+        if (utp.id_probe < APNI_DB_Adapter::PROBENAMELEN) {
+            qitem->setProperty("text", APNI_DB_Adapter::ProbesNames[utp.id_probe]);
+        }
     }
     //--loc, nb-ele, apod--//
     qitem = m_win->findChild<QObject *>("Location");
@@ -81,7 +83,7 @@ bool APnIGuiAdapter::update_utp_data(UTPs &utp) {
     }
     qitem = m_win->findChild<QObject *>("stopLine");
     if (qitem) {
-        qitem->setProperty("text", 1);
+        qitem->setProperty("text", utp.transmit_lines);
     }
     //------/
     return true;
@@ -94,7 +96,9 @@ int APnIGuiAdapter::getUtpDatasById(int utp_id) {
     int count = 0;
     if (m_db && m_db->isAvailable()) {
         count = m_db->lookupUtps(utp_id, utpobj);
-        update_utp_data(utpobj);
+        if (count) {
+            update_utp_data(utpobj);
+        }
     }
     return count;
 }

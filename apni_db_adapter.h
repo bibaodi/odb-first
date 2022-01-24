@@ -157,7 +157,8 @@ class APNI_DB_Adapter : public ESIDatabase {
     static const QString UTP_ColNames[];
     static const QString UTPINFO_ColNames[];
     static const QString MTP_ColNames[];
-    static const QString ProbesNames[];
+    static const int PROBENAMELEN = 12;
+    static const QString ProbesNames[PROBENAMELEN];
 };
 
 #endif // APnI_DB_ADAPTER_H

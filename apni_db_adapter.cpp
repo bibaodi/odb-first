@@ -467,9 +467,9 @@ bool APNI_DB_Adapter::addRows(const std::vector<QStringList> &_rows, int table_t
                                       Qt::CaseInsensitive)) {
                     utp.manipulated = item.toInt();
                 }
-                if (_ri > 100) {
-                    return true;
-                }
+                //                if (_ri > 100) {
+                //                    return true;
+                //                }
             }
             ret_ok = addUtpRow(utp);
             if (!ret_ok && err_count < 10) {
