@@ -773,22 +773,25 @@ bool APNI_DB_Adapter::addModes(const std::vector<QStringList> &_rows) { return a
 
 bool APNI_DB_Adapter::lookupUtps(int utp_id) {
     bool ret_ok = false;
-    odb::core::transaction t(this->begin());
     try {
-        odb::core::database *db = new odb::sqlite::database("apni-gen.db", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+        // odb::core::database *db = new odb::sqlite::database("apni-gen.db", SQLITE_OPEN_READWRITE |
+        // SQLITE_OPEN_CREATE);
+        odb::core::transaction t(begin());
         odb::result<UTPs> utp_rets;
-        utp_rets = db->query<UTPs>(); // odb::query<UTPs>::id_utp >= utp_id, true
-        int n = utp_rets.size();
-        if (n > 0) {
-            for (odb::result<UTPs>::iterator i(utp_rets.begin()); i != utp_rets.end(); i++) {
-                qDebug() << "look up UTPs:" << i->id_utp;
-            }
+        utp_rets = query<UTPs>(odb::query<UTPs>::id_utp >= utp_id);
+        //        utp_rets.cache();
+        //        int n = utp_rets.size();
+        //        if (n < 0) {
+        //            return ret_ok;
+        //        }
+        for (odb::result<UTPs>::iterator i(utp_rets.begin()); i != utp_rets.end(); i++) {
+            qDebug() << "look up UTPs:" << i->id_utp;
         }
+
+        t.commit();
     } catch (odb::exception &e) {
         qDebug() << "look up UTPs failed." << e.what();
     }
-
-    t.commit();
 
     return ret_ok;
 }
