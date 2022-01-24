@@ -21,6 +21,7 @@
 #include "stringdata.h"
 #include "writer.h"
 //--csv.begin.end
+#include "apni_db.h"
 #include "apni_guiadapter.h"
 #include <QFile>
 #include <vector>
@@ -77,6 +78,8 @@ bool generate_db() {
 
 int main(int argc, char *argv[]) {
     qmlRegisterType<APnIGuiAdapter>("EsiModule", 1, 0, "APnI_GuiAdapter");
+    // qmlRegisterType<UTPs>("EsiModule", 1, 0, "UTPs");
+    // qRegisterMetaType<UTPs>("UTPs");
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
     const QUrl url(QStringLiteral("qrc:/main.qml"));

@@ -11,6 +11,7 @@ Rectangle {
     property int limit_len: 10
     property real value_min: 0
     property real value_max: 300
+    property var item_value: 12.34
 
     Column {
         spacing: 1
@@ -28,6 +29,7 @@ Rectangle {
         Row {
             TextInput {
                 id: id_input
+                objectName: param_label
                 width: id_param_item.width * 0.75
                 height: id_param_item.height * 0.7
                 validator: DoubleValidator {
@@ -36,6 +38,7 @@ Rectangle {
                 }
                 font.pixelSize: 17
                 color: "blue"
+                text: item_value
                 maximumLength: limit_len
                 horizontalAlignment: Text.AlignRight
                 rightPadding: 3

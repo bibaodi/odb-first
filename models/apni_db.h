@@ -98,6 +98,7 @@ class UTPs {
             composed_mode, duty_cycle, nb_element_max, voltage, id_pulse_type)
 #pragma db index("utp_id_mtp_idx") method("BTREE") member(id_mtp, "DESC")
     int id_utp;
+#pragma db default(0)
     int id_pulse_type;
 #pragma db default(-1)
     int id_probe;

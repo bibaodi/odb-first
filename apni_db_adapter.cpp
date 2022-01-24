@@ -19,9 +19,9 @@ const QString APNI_DB_Adapter::TableNames[] = {
     QStringLiteral("MTPs"),       QStringLiteral("UTPInfos"), QLatin1Literal()};
 
 const QString APNI_DB_Adapter::UTP_ColNames[] = {
-    "id_utp",         " id_pulse_type", "id_probe",      "id_mode",  "id_apodization", "id_mtp",        "location",
-    "nb_element",     "freq",           "nb_half_cycle", "polarity", "transmit_lines", "composed_mode", "duty_cycle",
-    "nb_element_max", "voltage",        "delta",         "deltaT",   "manipulated",
+    "id_utp",         "id_pulse_type", "id_probe",      "id_mode",  "id_apodization", "id_mtp",        "location",
+    "nb_element",     "freq",          "nb_half_cycle", "polarity", "transmit_lines", "composed_mode", "duty_cycle",
+    "nb_element_max", "voltage",       "delta",         "deltaT",   "manipulated",
 };
 
 const QString APNI_DB_Adapter::UTPINFO_ColNames[] = {
@@ -51,6 +51,9 @@ const QString APNI_DB_Adapter::MTP_ColNames[] = {
     "deq4MI",       "deq4TIB",        "zB3",      "w01_mW",      "zBP_cm",      "z1_cm",
     "minW3ITA3_mW", "ticas_s",        "tisas_s",
 };
+
+const QString APNI_DB_Adapter::ProbesNames[] = {"",        "L16-4X", "L16-4E", "L9-2X",   "L9-2E",  "LV16-4E",
+                                                "LH22-6E", "C5-1X",  "C9-2X",  "MC12-3E", "E12-3E", "P5-1X"};
 
 APNI_DB_Adapter *APNI_DB_Adapter::get_instance() {
     static APNI_DB_Adapter obj("apni-gen.db");
@@ -393,6 +396,7 @@ bool APNI_DB_Adapter::addRows(const std::vector<QStringList> &_rows, int table_t
                 }
                 if (!QString::compare(headers[_ic], UTP_ColNames[static_cast<int>(UTP_COLs::id_pulse_type)],
                                       Qt::CaseInsensitive)) {
+                    // qDebug() << "item.toInt()=" << item.toInt();
                     utp.id_pulse_type = item.toInt();
                 }
                 if (!QString::compare(headers[_ic], UTP_ColNames[static_cast<int>(UTP_COLs::id_probe)],
@@ -771,7 +775,7 @@ bool APNI_DB_Adapter::addRows(const std::vector<QStringList> &_rows, int table_t
 
 bool APNI_DB_Adapter::addModes(const std::vector<QStringList> &_rows) { return addRows(_rows, TABLE_MODE); }
 
-bool APNI_DB_Adapter::lookupUtps(int utp_id) {
+bool APNI_DB_Adapter::lookupUtps(int utp_id, UTPs &utpobj) {
     bool ret_ok = false;
     try {
         // odb::core::database *db = new odb::sqlite::database("apni-gen.db", SQLITE_OPEN_READWRITE |
@@ -787,12 +791,16 @@ bool APNI_DB_Adapter::lookupUtps(int utp_id) {
         int n = 0;
         for (odb::result<UTPs>::iterator i(utp_rets.begin()); i != utp_rets.end(); i++) {
             qDebug() << "look up UTPs:" << i->id_utp << i->id_pulse_type << i->id_probe << i->id_mode
-                     << i->id_apodization << i->id_mtp;
+                     << i->id_apodization << i->id_mtp << "voltage" << i->voltage << "duty" << i->duty_cycle;
+            utpobj.voltage = i->voltage;
+            utpobj.duty_cycle = i->duty_cycle;
+            utpobj = *i;
             n++;
         }
         t.commit();
-        if (n)
+        if (n) {
             return true;
+        }
     } catch (odb::exception &e) {
         qDebug() << "look up UTPs failed." << e.what();
     }

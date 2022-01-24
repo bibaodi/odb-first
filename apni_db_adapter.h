@@ -138,7 +138,7 @@ class APNI_DB_Adapter : public ESIDatabase {
     bool addModes(const std::vector<QStringList> &_rows);
     bool addRows(const std::vector<QStringList> &_rows, int table_type);
     bool isAvailable();
-    bool lookupUtps(int _id);
+    bool lookupUtps(int _id, UTPs &);
 
   public:
     enum TABLE_TYPE {
@@ -157,6 +157,7 @@ class APNI_DB_Adapter : public ESIDatabase {
     static const QString UTP_ColNames[];
     static const QString UTPINFO_ColNames[];
     static const QString MTP_ColNames[];
+    static const QString ProbesNames[];
 };
 
 #endif // APnI_DB_ADAPTER_H

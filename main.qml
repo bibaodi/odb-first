@@ -16,6 +16,9 @@ Window {
         id: id_apni_adapter
     }
 
+    //    UTPs {
+    //        id: id_utp_obj
+    //    }
     Column {
         id: id_column_0
         x: id_window0.width * 0.05
@@ -31,22 +34,25 @@ Window {
             spacing: id_grid_params.columnSpacing
 
             ParamInputItem {
-                id: id_comboBox_utp
+                id: id_utp_item
                 width: id_location_item.width
                 height: parent.height
                 param_label: "utp_id"
                 param_unit: "id"
+                item_value: 14491
             }
             Rectangle {
                 border.color: "green"
                 border.width: 1
                 width: id_location_item.width
-                height: id_comboBox_utp.height
+                height: id_utp_item.height
                 TextInput {
                     id: textInput
                     anchors.fill: parent
+                    verticalAlignment: Text.AlignVCenter
+                    horizontalAlignment: Text.AlignHCenter
                     color: "green"
-                    //displayText: "ProbeName"
+                    objectName: "ProbeName"
                     text: qsTr("ProbeName")
                     font.pixelSize: 12
                 }
@@ -57,13 +63,18 @@ Window {
                 width: id_location_item.width
                 text: qsTr("Import")
                 onClicked: {
-                    var utp_id = id_comboBox_utp.get_value()
+                    var utp_id = id_utp_item.get_value()
+                    var utpobj
                     console.log(text, ":clicked: ", utp_id)
-                    var succ = id_apni_adapter.getUtpDatasById(1)
+                    id_logItem.append(`import UTP(id= ${utp_id}).`)
+                    var succ = id_apni_adapter.getUtpDatasById(utp_id)
+                    console.log("succ=", succ)
                     if (!succ) {
                         id_window0.alert(3000)
                         id_msg_dialog.alert("UTP id not found.")
                         // id_msg_dialog.open()
+                    } else {
+                        console.log("update info with select result.")
                     }
                 }
             }
@@ -236,22 +247,51 @@ Window {
                 width: parent.width
                 height: parent.height
                 border.color: "black"
-                TextEdit {
+                Flickable {
+                    id: id_flick
                     width: parent.width
                     height: parent.height
-                    textFormat: TextEdit.AutoText
-                    text: "<b>logs:</b>"
-                    font.family: "Helvetica"
-                    font.pointSize: 9
-                    color: "blue"
-                    focus: true
-                    selectByMouse: true
+                    contentWidth: id_logItem.paintedWidth
+                    contentHeight: id_logItem.paintedHeight
+                    boundsBehavior: Flickable.StopAtBounds
+                    ScrollBar.vertical: ScrollBar {}
+                    clip: true
+
+                    function ensureVisible(r) {
+                        if (contentX >= r.x)
+                            contentX = r.x
+                        else if (contentX + width <= r.x + r.width)
+                            contentX = r.x + r.width - width
+                        if (contentY >= r.y)
+                            contentY = r.y
+                        else if (contentY + height <= r.y + r.height)
+                            contentY = r.y + r.height - height
+                    }
+
+                    TextEdit {
+                        id: id_logItem
+                        width: id_flick.width
+                        //height: parent.height
+                        textFormat: TextEdit.AutoText
+                        text: "<b>logs:</b>"
+                        font.family: "Helvetica"
+                        font.pointSize: 9
+                        color: "blue"
+                        focus: true
+                        selectByMouse: true
+                        leftPadding: 5
+                        wrapMode: TextEdit.Wrap
+                        readOnly: true
+                        onCursorRectangleChanged: id_flick.ensureVisible(
+                                                      cursorRectangle)
+                    }
                 }
             }
         }
     }
     Component.onCompleted: {
-        id_apni_adapter.getUtpDatasById(1)
+        id_apni_adapter.setRoot_win(id_window0)
+        console.log("Component.onCompleted")
     }
 
     MessageDialog {
