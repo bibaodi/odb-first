@@ -127,16 +127,16 @@ class APNI_DB_Adapter : public ESIDatabase {
     bool isHeaderMatch(const QStringList &csvHeaders, int);
     void addVersion(const QString &msg);
     bool addProbe(const int &_id, const QString &_name);
-    bool addProbes(const vector<int> &_id, const vector<QString> &_name);
+    bool addProbes(const std::vector<int> &_id, const std::vector<QString> &_name);
     bool addMode(const int &_id, const QString &_name);
     bool addRow(const int &_id, const QString &_name, int);
     bool addUtpRow(const UTPs &);
     bool addMtpRow(const MTPs &);
     bool addUtpiRow(const UTPInfos &);
     bool addRow(void *, int);
-    bool addModes(const vector<int> &_id, const vector<QString> &_name);
-    bool addModes(const vector<QStringList> &_rows);
-    bool addRows(const vector<QStringList> &_rows, int table_type);
+    bool addModes(const std::vector<int> &_id, const std::vector<QString> &_name);
+    bool addModes(const std::vector<QStringList> &_rows);
+    bool addRows(const std::vector<QStringList> &_rows, int table_type);
     bool isAvailable();
     bool lookupUtps(int _id);
 

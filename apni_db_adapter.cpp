@@ -11,7 +11,7 @@
 #include <string>
 #include <string_view>
 
-using namespace odb::core;
+// using namespace odb::core;
 
 const QString APNI_DB_Adapter::TableNames[] = {
     QStringLiteral("Probes"),     QStringLiteral("Modes"),    QStringLiteral("Apodizations"),
@@ -163,7 +163,7 @@ bool APNI_DB_Adapter::addProbe(const int &_id, const QString &_name) {
     return ret_ok;
 }
 
-bool APNI_DB_Adapter::addProbes(const vector<int> &_ids, const vector<QString> &_names) {
+bool APNI_DB_Adapter::addProbes(const std::vector<int> &_ids, const std::vector<QString> &_names) {
     bool ret_ok = false;
     const int len_id = _ids.size();
     const int len_name = _names.size();
@@ -211,7 +211,7 @@ bool APNI_DB_Adapter::addMode(const int &_id, const QString &_name) {
     return ret_ok;
 }
 
-bool APNI_DB_Adapter::addModes(const vector<int> &_ids, const vector<QString> &_names) {
+bool APNI_DB_Adapter::addModes(const std::vector<int> &_ids, const std::vector<QString> &_names) {
     bool ret_ok = false;
     const int len_id = _ids.size();
     const int len_name = _names.size();
@@ -347,7 +347,7 @@ bool APNI_DB_Adapter::addRow(const int &_id, const QString &_name, int table_typ
     return ret_ok;
 }
 
-bool APNI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) {
+bool APNI_DB_Adapter::addRows(const std::vector<QStringList> &_rows, int table_type) {
     QStringList _row = _rows[0];
     bool ret_ok = false;
     int err_count = 0;
@@ -769,13 +769,15 @@ bool APNI_DB_Adapter::addRows(const vector<QStringList> &_rows, int table_type) 
     return ret_ok;
 }
 
-bool APNI_DB_Adapter::addModes(const vector<QStringList> &_rows) { return addRows(_rows, TABLE_MODE); }
+bool APNI_DB_Adapter::addModes(const std::vector<QStringList> &_rows) { return addRows(_rows, TABLE_MODE); }
 
 bool APNI_DB_Adapter::lookupUtps(int utp_id) {
     bool ret_ok = false;
     odb::core::transaction t(this->begin());
     try {
-        odb::result<UTPs> utp_rets(query<UTPs>(odb::query<UTPs>::id_utp >= utp_id));
+        odb::core::database *db = new odb::sqlite::database("apni-gen.db", SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE);
+        odb::result<UTPs> utp_rets;
+        utp_rets = db->query<UTPs>(); // odb::query<UTPs>::id_utp >= utp_id, true
         int n = utp_rets.size();
         if (n > 0) {
             for (odb::result<UTPs>::iterator i(utp_rets.begin()); i != utp_rets.end(); i++) {

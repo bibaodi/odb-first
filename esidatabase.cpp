@@ -25,10 +25,10 @@ int ESIDatabase::init_db(int cur_version) {
     }
     //数据库文件不存在，根据schema创建
     if (0 == db_version) {
-        connection_ptr c(connection());
+        odb::core::connection_ptr c(connection());
         c->execute("PRAGMA foreign_keys=OFF");
-        transaction t(c->begin());
-        schema_catalog::create_schema(*this, m_schemaName.toStdString());
+        odb::core::transaction t(c->begin());
+        odb::core::schema_catalog::create_schema(*this, m_schemaName.toStdString());
         t.commit();
         c->execute("PRAGMA foreign_keys=ON");
         m_available = true;
@@ -45,8 +45,8 @@ int ESIDatabase::init_db(int cur_version) {
 }
 
 void ESIDatabase::upgrade(int cur_version, int db_version, const QString &schema_name) {
-    transaction tr(this->connection()->begin());
-    schema_catalog::migrate(*this, cur_version, schema_name.toStdString());
+    odb::core::transaction tr(this->connection()->begin());
+    odb::core::schema_catalog::migrate(*this, cur_version, schema_name.toStdString());
     tr.commit();
     m_update = true;
 }

@@ -4,8 +4,8 @@
 #include <memory>
 //#include <odb/database.hxx>
 #include <odb/sqlite/database.hxx>
-using namespace std;
-using namespace odb::core;
+// using namespace std;
+// using namespace odb::core;
 class QTextCodec;
 class ESIDatabase : public odb::sqlite::database {
   public:
