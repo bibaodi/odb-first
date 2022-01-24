@@ -27,7 +27,7 @@
 
 inline std::auto_ptr<odb::database> create_database(int &argc, char *argv[]) {
     using namespace std;
-    using namespace odb::core;
+    // using namespace odb::core;
 
     if (argc > 1 && argv[1] == string("--help")) {
         cout << "Usage: " << argv[0] << " [options]" << endl << "Options:" << endl;
@@ -38,20 +38,21 @@ inline std::auto_ptr<odb::database> create_database(int &argc, char *argv[]) {
     }
 
 #if defined(DATABASE_SQLITE)
-    auto_ptr<database> db(new odb::sqlite::database(argc, argv, false, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE));
+    auto_ptr<odb::core::database> db(
+        new odb::sqlite::database(argc, argv, false, SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE));
 
     // Create the database schema. Due to bugs in SQLite foreign key
     // support for DDL statements, we need to temporarily disable
     // foreign keys.
     //
     {
-        connection_ptr c(db->connection());
+        odb::core::connection_ptr c(db->connection());
 
         c->execute("PRAGMA foreign_keys=OFF");
-        bool exist = schema_catalog::exists(*db, "etons");
+        bool exist = odb::core::schema_catalog::exists(*db, "etons");
         if (!exist) {
-            transaction t(c->begin());
-            schema_catalog::create_schema(*db, "etons", false); // if exist then ignore create.
+            odb::core::transaction t(c->begin());
+            odb::core::schema_catalog::create_schema(*db, "etons", false); // if exist then ignore create.
 
             t.commit();
         }

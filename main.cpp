@@ -14,11 +14,11 @@
 //#include "person_odb.h"
 
 using namespace std;
-using namespace odb::core;
+// using namespace odb::core;
 
 int main_db(int argc, char *argv[]) {
     try {
-        auto_ptr<database> db(create_database(argc, argv));
+        auto_ptr<odb::core::database> db(create_database(argc, argv));
 
         unsigned long john_id, joe_id;
 
@@ -30,7 +30,7 @@ int main_db(int argc, char *argv[]) {
             Person jane("Jane", "Doe", 32);
             Person joe("Joe", "Dirt", 30);
 
-            transaction t(db->begin());
+            odb::core::transaction t(db->begin());
 
             // Make objects persistent and save their ids for later use.
             //
@@ -47,7 +47,7 @@ int main_db(int argc, char *argv[]) {
         // Say hello to those over 30.
         //
         {
-            transaction t(db->begin());
+            odb::core::transaction t(db->begin());
 
             odb::result<Person> r(db->query<Person>(odb::query<Person>::age > 30));
 
@@ -57,11 +57,24 @@ int main_db(int argc, char *argv[]) {
 
             t.commit();
         }
+        //--eton debug
+        {
+            odb::core::transaction t(db->begin());
+
+            odb::result<Person> r;
+            r = db->query<Person>();
+
+            for (odb::result<Person>::iterator i(r.begin()); i != r.end(); ++i) {
+                cout << "Hello, eton::" << i->first() << " " << i->last() << "!" << endl;
+            }
+
+            t.commit();
+        }
 
         // Joe Dirt just had a birthday, so update his age.
         //
         {
-            transaction t(db->begin());
+            odb::core::transaction t(db->begin());
 
             auto_ptr<Person> joe(db->load<Person>(joe_id));
             joe->age(joe->age() + 1);
@@ -97,7 +110,7 @@ int main_db(int argc, char *argv[]) {
         // Print some statistics about all the people in our database.
         //
         {
-            transaction t(db->begin());
+            odb::core::transaction t(db->begin());
 
             // The result of this (aggregate) query always has exactly one element
             // so use the query_value() shortcut.
@@ -115,7 +128,7 @@ int main_db(int argc, char *argv[]) {
         // John Doe is no longer in our database.
         //
         {
-            transaction t(db->begin());
+            odb::core::transaction t(db->begin());
             db->erase<Person>(john_id);
             t.commit();
         }
