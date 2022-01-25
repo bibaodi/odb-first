@@ -98,6 +98,8 @@ int APnIGuiAdapter::getUtpDatasById(int utp_id) {
         count = m_db->lookupUtps(utp_id, utpobj);
         if (count) {
             update_utp_data(utpobj);
+        } else {
+            qDebug() << "No Utp Found from db using id=" << utp_id;
         }
     }
     return count;

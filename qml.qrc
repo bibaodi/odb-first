@@ -3,5 +3,6 @@
         <file>main.qml</file>
         <file>ParamInputItem.qml</file>
         <file>ParamSelectItem.qml</file>
+        <file>apni-operation.log</file>
     </qresource>
 </RCC>

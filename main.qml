@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Dialogs 1.2
+//import Qt.labs.platform 1.1
 import EsiModule 1.0
 
 Window {
@@ -14,6 +15,29 @@ Window {
 
     APnI_GuiAdapter {
         id: id_apni_adapter
+    }
+
+    DocumentHandler {
+        id: document
+        document: id_logItem.textDocument
+        cursorPosition: id_logItem.cursorPosition
+        selectionStart: id_logItem.selectionStart
+        selectionEnd: id_logItem.selectionEnd
+        textColor: "black"
+        Component.onCompleted: {
+            if (Qt.application.arguments.length === 2)
+                document.load("file:" + Qt.application.arguments[1])
+            else
+                document.load("/tmp/apni.log")
+        }
+        onLoaded: {
+            id_logItem.textFormat = format
+            id_logItem.text = text
+        }
+        onError: {
+            id_msg_dialog.text = message
+            id_msg_dialog.visible = true
+        }
     }
 
     //    UTPs {
@@ -71,7 +95,9 @@ Window {
                     console.log("succ=", succ)
                     if (!succ) {
                         id_window0.alert(3000)
-                        id_msg_dialog.alert("UTP id not found.")
+                        var msg = `UTP id=${utp_id} not found!`
+                        id_msg_dialog.alert(msg)
+                        id_logItem.append(msg)
                         // id_msg_dialog.open()
                     } else {
                         console.log("update info with select result.")
@@ -289,15 +315,37 @@ Window {
             }
         }
     }
+    property var locale: Qt.locale()
+    property date currentDate: new Date()
+
     Component.onCompleted: {
         id_apni_adapter.setRoot_win(id_window0)
-        console.log("Component.onCompleted")
+        var datetimes = currentDate.toLocaleString(locale, "yyMMdd_hhmmss")
+        console.log("Component.onCompleted@", datetimes)
     }
 
+    onClosing: {
+        var datetimes = currentDate.toLocaleString(locale, "yyMMdd_hhmmss")
+        var log_file = `/tmp/apni-operation_${datetimes}.log`
+        console.log("on closing...save to:", log_file)
+        document.saveAs(`file:${log_file}`)
+    }
+
+    //    FileDialog {
+    //        id: saveDialog
+    //        fileMode: FileDialog.SaveFile
+    //        defaultSuffix: document.fileType
+    //        nameFilters: ["Text files (*.txt)", "HTML files (*.html *.htm)", "Markdown files (*.md *.markdown)"]
+    //        selectedNameFilter.index: document.fileType === "txt" ? 0 : 1
+    //        folder: StandardPaths.writableLocation(StandardPaths.DocumentsLocation)
+    //        onAccepted: document.saveAs(file)
+    //    }
     MessageDialog {
         id: id_msg_dialog
+        //x: (id_window0.width - width) / 2
         title: "APnI Error"
         text: "APni Message box."
+
         onAccepted: {
             visible = false
             //Qt.quit()

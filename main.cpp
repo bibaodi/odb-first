@@ -23,6 +23,7 @@
 //--csv.begin.end
 #include "apni_db.h"
 #include "apni_guiadapter.h"
+#include "documenthandler.h"
 #include <QFile>
 #include <vector>
 
@@ -63,7 +64,8 @@ bool generate_db() {
         if (csv_datas.length() < 1) {
             success[i] = false;
         } else {
-            std::vector<QStringList> _rows = csv_datas.toVector().toStdVector();
+            std::vector<QStringList> _rows =
+                std::vector<QStringList>(csv_datas.toVector().begin(), csv_datas.toVector().end());
             success[i] = ada->addRows(_rows, i);
         }
         qDebug() << i << ": success=" << success[i];
@@ -78,6 +80,7 @@ bool generate_db() {
 
 int main(int argc, char *argv[]) {
     qmlRegisterType<APnIGuiAdapter>("EsiModule", 1, 0, "APnI_GuiAdapter");
+    qmlRegisterType<DocumentHandler>("EsiModule", 1, 0, "DocumentHandler");
     // qmlRegisterType<UTPs>("EsiModule", 1, 0, "UTPs");
     // qRegisterMetaType<UTPs>("UTPs");
     QGuiApplication app(argc, argv);
