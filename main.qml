@@ -250,19 +250,19 @@ Window {
             }
 
             RoundButton {
-                id: roundButton1
+                id: id_button_stop
                 width: id_button_start.width
                 text: "stop"
             }
 
             RoundButton {
-                id: roundButton2
+                id: id_button_addutp
                 width: id_button_start.width
                 text: "add"
             }
 
             RoundButton {
-                id: roundButton3
+                id: id_button_parse
                 width: id_button_start.width
                 text: "parse Result"
             }
@@ -337,6 +337,33 @@ Window {
         function onClosing() {
             console.log("on closing...save to:", log_file)
             document.saveAs(`file:${log_file}`)
+        }
+    }
+
+    Connections {
+        target: id_button_start
+        function onClicked() {
+            console.log("starting...push")
+        }
+    }
+
+    Connections {
+        target: id_button_stop
+        function onClicked() {
+            console.log("stop...push")
+        }
+    }
+
+    Connections {
+        target: id_button_addutp
+        function onClicked() {
+            console.log("id_button_addutp")
+        }
+    }
+    Connections {
+        target: id_button_parse
+        function onClicked() {
+            console.log("parse button")
         }
     }
 

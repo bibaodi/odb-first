@@ -24,8 +24,12 @@
 #include "apni_db.h"
 #include "apni_guiadapter.h"
 #include "documenthandler.h"
+#include <QDBusInterface>
+#include <QDBusReply>
 #include <QFile>
 #include <vector>
+
+#include "jsoncpp/json/json.h"
 
 #define APnI_STATIC_TABLE_COUNTS 4
 #define APnI_DYNAMIC_TABLE_COUNTS 3 + 1
@@ -78,6 +82,54 @@ bool generate_db() {
     return true;
 }
 
+bool connect_to_dbus() {
+#define DBUS_APNI_IFACE_NAME "com.esi.APnI"
+#define DBUS_APNI_SERVICE_NAME "com.esi.APnI"
+#define DBUS_APNI_OBJ_NAME "/apni"
+    if (!QDBusConnection::sessionBus().isConnected()) {
+        fprintf(stderr, "Cannot connect to the D-Bus session bus.\n"
+                        "To start it, run:\n"
+                        "\teval `dbus-launch --auto-syntax`\n");
+        return false;
+    }
+    QDBusInterface *iface;
+    iface = new QDBusInterface(DBUS_APNI_SERVICE_NAME, DBUS_APNI_OBJ_NAME, DBUS_APNI_IFACE_NAME,
+                               QDBusConnection::sessionBus());
+    if (!iface->isValid()) {
+        fprintf(stderr, "%s\n", qPrintable(QDBusConnection::sessionBus().lastError().message()));
+        QCoreApplication::instance()->quit();
+    }
+    // QDBusMessage reply = iface->call("key_ev_slot", "a", "p");
+    QDBusReply<int> reply = iface->call("key_ev_slot", "a", "p");
+    if (reply.isValid()) {
+        qDebug() << "dbus reply=" << reply.value();
+        return true;
+    } else {
+        qDebug() << "DBus call failed!" << reply.error().message();
+        return false;
+    }
+}
+
+bool toJason() {
+    Json::Value root;
+    Json::Value data;
+    constexpr bool shouldUseOldWay = false;
+    root["action"] = "run";
+    data["number"] = 1;
+    root["data"] = data;
+
+    if (shouldUseOldWay) {
+        Json::FastWriter writer;
+        const std::string json_file = writer.write(root);
+        std::cout << json_file << std::endl;
+    } else {
+        Json::StreamWriterBuilder builder;
+        const std::string json_file = Json::writeString(builder, root);
+        std::cout << json_file << std::endl;
+    }
+    return true;
+}
+
 int main(int argc, char *argv[]) {
     qmlRegisterType<APnIGuiAdapter>("EsiModule", 1, 0, "APnI_GuiAdapter");
     qmlRegisterType<DocumentHandler>("EsiModule", 1, 0, "DocumentHandler");
@@ -106,5 +158,12 @@ int main(int argc, char *argv[]) {
             qDebug() << "Data base generate successful... congratulations~~";
         }
     }
+    /*    bool dbus_ok = connect_to_dbus();
+        if (!dbus_ok) {
+            qDebug() << "connect to dbus error~";
+            return -1;
+        }
+        */
+    toJason();
     return app.exec();
 }

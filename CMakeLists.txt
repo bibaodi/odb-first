@@ -15,11 +15,16 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-
-find_package(QT NAMES Qt6 Qt5 COMPONENTS Core Quick REQUIRED)
-find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Core Quick REQUIRED)
+find_package(Qt5 COMPONENTS Core Quick DBus REQUIRED)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
-find_package(ODB REQUIRED COMPONENTS sqlite OPTIONAL_COMPONENTS )
+
+#get_target_property(JSON_INC_PATH jsoncpp_lib INTERFACE_INCLUDE_DIRECTORIES)
+#include_directories(${JSON_INC_PATH})
+
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(JSONCPP jsoncpp)
+link_libraries(${JSONCPP_LIBRARIES})
+include_directories(${JSON_INC_PATH})
 
 include(${ODB_USE_FILE})
 
@@ -55,14 +60,17 @@ set(PROJECT_SOURCES
 add_executable(${TARGET} ${PROJECT_SOURCES})
 
 target_link_libraries(${TARGET}
-        Qt${QT_VERSION_MAJOR}::Core  Qt${QT_VERSION_MAJOR}::Quick
+        Qt${QT_VERSION_MAJOR}::Core  Qt${QT_VERSION_MAJOR}::Quick Qt5::DBus
         ${ODB_LIBRARIES}
-        sqlite3 )
+        sqlite3
+        ${JSONCPP_LIBRARIES}
+        )
 
 target_include_directories(${TARGET}
         PRIVATE
                 ${ODB_INCLUDE_DIRS}
-                ${ODB_COMPILE_OUTPUT_DIR})
+                ${ODB_COMPILE_OUTPUT_DIR}
+                )
 
 target_compile_definitions(${TARGET}
         PRIVATE
