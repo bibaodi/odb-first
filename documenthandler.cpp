@@ -282,7 +282,7 @@ void DocumentHandler::saveAs(const QUrl &fileUrl) {
     const QString filePath = fileUrl.toLocalFile();
     const bool isHtml = QFileInfo(filePath).suffix().contains(QLatin1String("htm"));
     QFile file(filePath);
-    if (!file.open(QFile::WriteOnly | QFile::Truncate | (isHtml ? QFile::NotOpen : QFile::Text))) {
+    if (!file.open(QFile::WriteOnly | QFile::Append | (isHtml ? QFile::NotOpen : QFile::Text))) {
         emit error(tr("Cannot save: ") + file.errorString());
         return;
     }

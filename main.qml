@@ -13,6 +13,9 @@ Window {
     color: "#77c08e"
     title: qsTr("APnI Measure Tool")
 
+    property var datetimes: currentDate.toLocaleString(locale, "yyMMdd_hhmmss")
+    property var log_file: `/tmp/apni-operation_${datetimes}.log`
+
     APnI_GuiAdapter {
         id: id_apni_adapter
     }
@@ -28,7 +31,7 @@ Window {
             if (Qt.application.arguments.length === 2)
                 document.load("file:" + Qt.application.arguments[1])
             else
-                document.load("/tmp/apni.log")
+                document.load(log_file)
         }
         onLoaded: {
             id_logItem.textFormat = format
@@ -90,14 +93,14 @@ Window {
                     var utp_id = id_utp_item.get_value()
                     var utpobj
                     console.log(text, ":clicked: ", utp_id)
-                    id_logItem.append(`import UTP(id= ${utp_id}).`)
+                    id_logItem.add_log(`import UTP(id= ${utp_id}).`)
                     var succ = id_apni_adapter.getUtpDatasById(utp_id)
                     console.log("succ=", succ)
                     if (!succ) {
                         id_window0.alert(3000)
                         var msg = `UTP id=${utp_id} not found!`
                         id_msg_dialog.alert(msg)
-                        id_logItem.append(msg)
+                        id_logItem.add_log(msg)
                         // id_msg_dialog.open()
                     } else {
                         console.log("update info with select result.")
@@ -310,6 +313,11 @@ Window {
                         readOnly: true
                         onCursorRectangleChanged: id_flick.ensureVisible(
                                                       cursorRectangle)
+                        function add_log(msg) {
+                            append(msg)
+                            console.log("add_log:", log_file)
+                            document.saveAs(`file:${log_file}`)
+                        }
                     }
                 }
             }
@@ -324,11 +332,12 @@ Window {
         console.log("Component.onCompleted@", datetimes)
     }
 
-    onClosing: {
-        var datetimes = currentDate.toLocaleString(locale, "yyMMdd_hhmmss")
-        var log_file = `/tmp/apni-operation_${datetimes}.log`
-        console.log("on closing...save to:", log_file)
-        document.saveAs(`file:${log_file}`)
+    Connections {
+        target: id_window0
+        function onClosing() {
+            console.log("on closing...save to:", log_file)
+            document.saveAs(`file:${log_file}`)
+        }
     }
 
     //    FileDialog {
