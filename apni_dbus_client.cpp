@@ -37,9 +37,9 @@ int APnI_DBUS_Client::run_cmd(QString param, QString cmd) {
     QDBusReply<int> reply = m_iface->call("key_ev_slot", cmd, param);
     if (reply.isValid()) {
         qDebug() << "dbus reply=" << reply.value();
-        return 0;
+        return reply.value();
     } else {
         qDebug() << "DBus call failed!" << reply.error().message();
-        return -1;
+        return -999;
     }
 }

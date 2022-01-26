@@ -384,7 +384,10 @@ Window {
             utpobj.stopLine = id_startline_item.get_value()
             JsonObj.printUtpJsonObj(utpobj)
             //end collect params to json.
-            id_dbus_client.run_cmd(JSON.stringify(utpobj), "utp-start")
+            var params = JSON.stringify(utpobj)
+            id_logItem.add_log(`start push: param=${params}`)
+            var ret = id_dbus_client.run_cmd(params, "utp-start")
+            id_logItem.add_log(`running result: ${ret}`)
         }
     }
 
