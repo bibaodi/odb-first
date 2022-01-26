@@ -22,14 +22,14 @@
 #include "writer.h"
 //--csv.begin.end
 #include "apni_db.h"
+#include "apni_dbus_client.h"
 #include "apni_guiadapter.h"
 #include "documenthandler.h"
+#include "jsoncpp/json/json.h"
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QFile>
 #include <vector>
-
-#include "jsoncpp/json/json.h"
 
 #define APnI_STATIC_TABLE_COUNTS 4
 #define APnI_DYNAMIC_TABLE_COUNTS 3 + 1
@@ -132,6 +132,7 @@ bool toJason() {
 
 int main(int argc, char *argv[]) {
     qmlRegisterType<APnIGuiAdapter>("EsiModule", 1, 0, "APnI_GuiAdapter");
+    qmlRegisterType<APnI_DBUS_Client>("EsiModule", 1, 0, "APnI_DBUS_Client");
     qmlRegisterType<DocumentHandler>("EsiModule", 1, 0, "DocumentHandler");
     // qmlRegisterType<UTPs>("EsiModule", 1, 0, "UTPs");
     // qRegisterMetaType<UTPs>("UTPs");
@@ -164,6 +165,6 @@ int main(int argc, char *argv[]) {
             return -1;
         }
         */
-    toJason();
+    // toJason();
     return app.exec();
 }

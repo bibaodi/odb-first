@@ -27,6 +27,10 @@ Window {
         id: id_apni_adapter
     }
 
+    APnI_DBUS_Client {
+        id: id_dbus_client
+    }
+
     DocumentHandler {
         id: document
         document: id_logItem.textDocument
@@ -81,13 +85,14 @@ Window {
                 width: id_location_item.width
                 height: id_utp_item.height
                 TextInput {
-                    id: textInput
+                    id: id_probename_item
                     anchors.fill: parent
                     verticalAlignment: Text.AlignVCenter
                     horizontalAlignment: Text.AlignHCenter
                     color: "green"
                     objectName: "ProbeName"
                     text: qsTr("ProbeName")
+                    readOnly: true
                     font.pixelSize: 12
                 }
             }
@@ -131,6 +136,7 @@ Window {
                 width: parent.width / 4
             }
             ParamInputItem {
+                id: id_nb_ele_item
                 param_label: "NB_ele"
                 param_unit: "<600"
                 value_min: 1
@@ -140,6 +146,7 @@ Window {
                 width: parent.width / 4
             }
             ParamInputItem {
+                id: id_id_apod_item
                 param_label: "id_Apod"
                 param_unit: "id"
                 value_min: 0
@@ -149,12 +156,14 @@ Window {
                 width: parent.width / 4
             }
             ParamInputItem {
+                id: id_freq_item
                 param_label: "freq"
                 param_unit: "MHz"
                 height: parent.height / 3
                 width: parent.width / 4
             }
             ParamInputItem {
+                id: id_nb_half_cycle_item
                 param_label: "Nb_half_cycle"
                 value_min: 1
                 value_max: 2000
@@ -164,6 +173,7 @@ Window {
                 width: parent.width / 4
             }
             ParamInputItem {
+                id: id_polarity_item
                 param_label: "polarity"
                 param_unit: "[1/-1]"
                 value_min: -1
@@ -172,6 +182,7 @@ Window {
                 width: parent.width / 4
             }
             ParamInputItem {
+                id: id_id_mode_item
                 param_label: "id_Mode"
                 param_unit: "id"
                 value_min: 0
@@ -181,12 +192,14 @@ Window {
                 width: parent.width / 4
             }
             ParamInputItem {
+                id: id_duty_cycle_item
                 param_label: "duty_cycle"
                 param_unit: "%"
                 height: parent.height / 3
                 width: parent.width / 4
             }
             ParamInputItem {
+                id: id_id_pulse_type_item
                 param_label: "id_pulse_type"
                 param_unit: "id"
                 value_min: 0
@@ -203,6 +216,7 @@ Window {
             spacing: id_grid_params.columnSpacing
 
             ParamInputItem {
+                id: id_voltage_item
                 param_label: "Voltage"
                 param_unit: "V"
                 value_min: 1
@@ -212,6 +226,7 @@ Window {
                 width: id_location_item.width
             }
             ParamInputItem {
+                id: id_prf_item
                 param_label: "PRF"
                 param_unit: "Hz"
                 value_min: 1
@@ -223,6 +238,7 @@ Window {
             Column {
                 Row {
                     ParamInputItem {
+                        id: id_startline_item
                         param_label: "startLine"
                         param_unit: "#"
                         value_min: 1
@@ -232,6 +248,7 @@ Window {
                         width: id_location_item.width / 2
                     }
                     ParamInputItem {
+                        id: id_stopline
                         param_label: "stopLine"
                         param_unit: "#"
                         value_min: 1
@@ -335,15 +352,6 @@ Window {
         id_apni_adapter.setRoot_win(id_window0)
         var datetimes = currentDate.toLocaleString(locale, "yyMMdd_hhmmss")
         console.log("Component.onCompleted@", datetimes)
-        //jason demo--
-        var JsonString = '{"a":"A whatever, run","b":"B fore something happens"}'
-        var JsonObject = JSON.parse(JsonString)
-
-        //retrieve values from JSON again
-        JsonObject.a = "Hello jason."
-        var bString = JsonObject.b
-
-        console.log("json demo:", JsonObject.a, bString)
     }
 
     Connections {
@@ -360,7 +368,23 @@ Window {
         function onClicked() {
             console.log("starting...push")
             var utpobj = JsonObj.getJsonobj()
-            //utpobj.pro
+            utpobj.ProbeName = id_probename_item.text
+            utpobj.Location = id_location_item.get_value()
+            utpobj.NB_ele = id_nb_ele_item.get_value()
+            utpobj.id_apod = id_id_apod_item.get_value()
+            utpobj.freq = id_freq_item.get_value()
+            utpobj.Nb_half_cycle = id_nb_ele_item.get_value()
+            utpobj.polarity = id_polarity_item.get_value()
+            utpobj.id_mode = id_id_mode_item.get_value()
+            utpobj.duty_cycle = id_duty_cycle_item.get_value()
+            utpobj.id_pulse_type = id_id_pulse_type_item.get_value()
+            utpobj.voltage = id_voltage_item.get_value()
+            utpobj.PRF = id_prf_item.get_value()
+            utpobj.startLine = id_startline_item.get_value()
+            utpobj.stopLine = id_startline_item.get_value()
+            JsonObj.printUtpJsonObj(utpobj)
+            //end collect params to json.
+            id_dbus_client.run_cmd(JSON.stringify(utpobj), "utp-start")
         }
     }
 

@@ -24,3 +24,24 @@ function getJsonStr() {
 function getJsonobj() {
     return JsonObj
 }
+
+function printUtpJsonObj(json_obj) {
+    print("print json object")
+    if ("object" === typeof (json_obj) || json_obj.constructor === Object) {
+        print(JSON.stringify(json_obj))
+    } else {
+        print("param is not json object")
+    }
+}
+
+function json_demo() {
+    //jason demo--
+    var JsonString = '{"a":"A whatever, run","b":"B fore something happens"}'
+    var JsonObject = JSON.parse(JsonString)
+
+    //retrieve values from JSON again
+    JsonObject.a = "Hello jason."
+    var bString = JsonObject.b
+
+    console.log("json demo:", JsonObject.a, bString)
+}
