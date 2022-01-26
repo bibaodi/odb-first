@@ -69,7 +69,12 @@ Rectangle {
         if (!id_input.text) {
             return 0
         }
-        return id_input.text
+        var num_value = parseFloat(id_input.text)
+        if (num_value !== num_value) {
+            return id_input.text
+        } else {
+            return num_value
+        }
     }
 }
 
