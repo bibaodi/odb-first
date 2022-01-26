@@ -4,6 +4,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Dialogs 1.2
 //import Qt.labs.platform 1.1
 import EsiModule 1.0
+import "JsonObjUTP.js" as JsonObj
 
 Window {
     id: id_window0
@@ -12,9 +13,15 @@ Window {
     visible: true
     color: "#77c08e"
     title: qsTr("APnI Measure Tool")
-
-    property var datetimes: currentDate.toLocaleString(locale, "yyMMdd_hhmmss")
+    property var locale: Qt.locale()
+    property date currentDate: new Date()
+    property var datetimes: currentDate.toLocaleString(locale,
+                                                       "yyMMddThhmmss.zzz")
     property var log_file: `/tmp/apni-operation_${datetimes}.log`
+
+    function current_datetime() {
+        return new Date().toLocaleString(locale, "yyMMddThhmmss.zzz")
+    }
 
     APnI_GuiAdapter {
         id: id_apni_adapter
@@ -314,7 +321,7 @@ Window {
                         onCursorRectangleChanged: id_flick.ensureVisible(
                                                       cursorRectangle)
                         function add_log(msg) {
-                            append(msg)
+                            append(current_datetime() + "] " + msg)
                             console.log("add_log:", log_file)
                             document.saveAs(`file:${log_file}`)
                         }
@@ -323,19 +330,27 @@ Window {
             }
         }
     }
-    property var locale: Qt.locale()
-    property date currentDate: new Date()
 
     Component.onCompleted: {
         id_apni_adapter.setRoot_win(id_window0)
         var datetimes = currentDate.toLocaleString(locale, "yyMMdd_hhmmss")
         console.log("Component.onCompleted@", datetimes)
+        //jason demo--
+        var JsonString = '{"a":"A whatever, run","b":"B fore something happens"}'
+        var JsonObject = JSON.parse(JsonString)
+
+        //retrieve values from JSON again
+        JsonObject.a = "Hello jason."
+        var bString = JsonObject.b
+
+        console.log("json demo:", JsonObject.a, bString)
     }
 
     Connections {
         target: id_window0
         function onClosing() {
             console.log("on closing...save to:", log_file)
+            id_logItem.add_log("closing!")
             document.saveAs(`file:${log_file}`)
         }
     }
@@ -344,6 +359,8 @@ Window {
         target: id_button_start
         function onClicked() {
             console.log("starting...push")
+            var utpobj = JsonObj.getJsonobj()
+            //utpobj.pro
         }
     }
 

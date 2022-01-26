@@ -3,5 +3,7 @@
         <file>main.qml</file>
         <file>ParamInputItem.qml</file>
         <file>ParamSelectItem.qml</file>
+        <file>JsonUTP.qml</file>
+        <file>JsonObjUTP.js</file>
     </qresource>
 </RCC>
