@@ -22,7 +22,7 @@ enum class UTP_COLs {
     nb_element,
     freq,
     nb_half_cycle,
-    polarity,
+    polarity, // default=0. if reverse then ~0. same to aixplorer.
     transmit_lines,
     composed_mode,
     duty_cycle,

@@ -7,7 +7,7 @@ var JsonObj = {
     "id_apod": 0,
     "freq": 0.0,
     "Nb_half_cycle": 0,
-    "polarity": 1,
+    "polarity": 0,
     "id_mode": 0,
     "duty_cycle": 0,
     "id_pulse_type": -1,

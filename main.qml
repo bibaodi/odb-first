@@ -175,7 +175,7 @@ Window {
             ParamInputItem {
                 id: id_polarity_item
                 param_label: "polarity"
-                param_unit: "[1/-1]"
+                param_unit: "0/~0"
                 value_min: -1
                 value_max: 1
                 height: parent.height / 3
