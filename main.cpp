@@ -42,7 +42,7 @@ bool generate_db() {
     APNI_DB_Adapter *ada = APNI_DB_Adapter::get_instance();
     if (ada->init_db(APnI_DB_VERSION) < 1) {
         qDebug() << "already created.";
-        return false;
+        return true;
     }
     ada->addVersion("init by eton when testing, generate all db with datas.");
 
