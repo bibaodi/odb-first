@@ -1,6 +1,6 @@
 #include "esidatabase.h"
 #include <QTextCodec>
-#include <glog/logging.h>
+//#include <glog/logging.h>
 #include <odb/schema-catalog.hxx>
 #include <odb/sqlite/database.hxx>
 #include <odb/sqlite/exceptions.hxx>

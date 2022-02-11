@@ -2,6 +2,11 @@
 
 # Author
 	eton
+## Dependents
+# v4.0+
+	jsoncpp:libjsoncpp-dev
+	odb
+	sqlite3:libsqlite3-0
 
 # Version
 	- 22/02/11 generate file-odb.{h|i|c|}xx by odb cli.

@@ -42,7 +42,7 @@ bool generate_db() {
     APNI_DB_Adapter *ada = APNI_DB_Adapter::get_instance();
     if (ada->init_db(APnI_DB_VERSION) < 1) {
         qDebug() << "already created.";
-        return success;
+        return false;
     }
     ada->addVersion("init by eton when testing, generate all db with datas.");
 
@@ -108,26 +108,6 @@ bool connect_to_dbus() {
         qDebug() << "DBus call failed!" << reply.error().message();
         return false;
     }
-}
-
-bool toJason() {
-    Json::Value root;
-    Json::Value data;
-    constexpr bool shouldUseOldWay = false;
-    root["action"] = "run";
-    data["number"] = 1;
-    root["data"] = data;
-
-    if (shouldUseOldWay) {
-        Json::FastWriter writer;
-        const std::string json_file = writer.write(root);
-        std::cout << json_file << std::endl;
-    } else {
-        Json::StreamWriterBuilder builder;
-        const std::string json_file = Json::writeString(builder, root);
-        std::cout << json_file << std::endl;
-    }
-    return true;
 }
 
 int main(int argc, char *argv[]) {
