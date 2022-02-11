@@ -395,6 +395,8 @@ Window {
         target: id_button_stop
         function onClicked() {
             console.log("stop...push")
+            var ret = id_dbus_client.run_cmd("stop", "utp-stop")
+            id_logItem.add_log(`running cmd=(stop), result: ${ret}`)
         }
     }
 
