@@ -1,4 +1,5 @@
 ### CMake ###
+config.h
 CMakeCache.txt
 CMakeFiles
 CMakeScripts

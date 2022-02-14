@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
 set(TARGET apni_client)
-project(${TARGET} LANGUAGES CXX)
+project(${TARGET} VERSION "0.1.1" LANGUAGES CXX)
+configure_file("${PROJECT_SOURCE_DIR}/config.h.in" "${PROJECT_SOURCE_DIR}/config.h")
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/Modules")
 find_package(ODB REQUIRED COMPONENTS qt sqlite)

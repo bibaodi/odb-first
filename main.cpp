@@ -1,5 +1,4 @@
-// file      : hello/driver.cxx
-// copyright : not copyrighted - public domain
+#include "config.h"
 
 #include <iostream>
 #include <memory> // std::shared_ptr
@@ -69,6 +68,7 @@ bool generate_db() {
             success[i] = false;
         } else {
             QVector<QStringList> csv_datas2 = csv_datas.toVector();
+
             std::vector<QStringList> _rows = std::vector<QStringList>(csv_datas2.begin(), csv_datas2.end());
             success[i] = ada->addRows(_rows, i);
         }
@@ -111,6 +111,13 @@ bool connect_to_dbus() {
 }
 
 int main(int argc, char *argv[]) {
+    if (argc > 1) {
+        if (0 == strcasecmp(("-v"), argv[1]) || 0 == strcasecmp("--version", argv[1])) {
+            std::cout << PROJECT_NAME << "\nVersion:" << PROJECT_VER << std::endl;
+            return 0;
+        }
+    }
+
     qmlRegisterType<APnIGuiAdapter>("EsiModule", 1, 0, "APnI_GuiAdapter");
     qmlRegisterType<APnI_DBUS_Client>("EsiModule", 1, 0, "APnI_DBUS_Client");
     qmlRegisterType<DocumentHandler>("EsiModule", 1, 0, "DocumentHandler");
