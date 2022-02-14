@@ -68,8 +68,8 @@ bool generate_db() {
         if (csv_datas.length() < 1) {
             success[i] = false;
         } else {
-            std::vector<QStringList> _rows =
-                std::vector<QStringList>(csv_datas.toVector().begin(), csv_datas.toVector().end());
+            QVector<QStringList> csv_datas2 = csv_datas.toVector();
+            std::vector<QStringList> _rows = std::vector<QStringList>(csv_datas2.begin(), csv_datas2.end());
             success[i] = ada->addRows(_rows, i);
         }
         qDebug() << i << ": success=" << success[i];
