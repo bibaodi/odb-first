@@ -135,9 +135,6 @@ int main(int argc, char *argv[]) {
         Qt::QueuedConnection);
     engine.load(url);
     if (!DEBUG_UI) {
-        //        int n = 0;
-        //        char *argv0[1] = {nullptr};
-        //        create_database(n, argv0);
         bool db_ok = generate_db();
         if (!db_ok) {
             qDebug() << "Data base generate not successful.";
@@ -146,12 +143,6 @@ int main(int argc, char *argv[]) {
             qDebug() << "Data base generate successful... congratulations~~";
         }
     }
-    /*    bool dbus_ok = connect_to_dbus();
-        if (!dbus_ok) {
-            qDebug() << "connect to dbus error~";
-            return -1;
-        }
-        */
-    // toJason();
+
     return app.exec();
 }

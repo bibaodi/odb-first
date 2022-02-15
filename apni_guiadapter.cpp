@@ -5,10 +5,14 @@
 
 #include "apni_db-odb.hxx"
 #include "apni_db.h"
+#include "jsoncpp/json/json.h"
 #include <QDebug>
 #include <QQuickItem>
-
 using namespace odb::core;
+
+const QString APnIGuiAdapter::UTPkeys[] = {"ProbeName",     "Location", "NB_ele",    "id_apod",    "freq",
+                                           "Nb_half_cycle", "polarity", "id_mode",   "duty_cycle", "id_pulse_type",
+                                           "voltage",       "PRF",      "startLine", "stopLine"};
 
 APnIGuiAdapter::APnIGuiAdapter(QObject *parent) : QObject(parent), m_db(nullptr), m_win(nullptr) {
     qDebug() << "APnIGuiAdapter init~";
@@ -103,6 +107,104 @@ int APnIGuiAdapter::getUtpDatasById(int utp_id) {
         }
     }
     return count;
+}
+
+int APnIGuiAdapter::setValueByIndex(int indx, float _val, UTPs *utp) {
+    float prf = -1, startline = -1, stopline = -1;
+    switch (indx) {
+    case 1:
+        utp->location = _val;
+        break;
+    case 2:
+        utp->nb_element = _val;
+        break;
+    case 3:
+        utp->id_apodization = _val;
+        break;
+    case 4:
+        utp->freq = _val;
+        break;
+    case 5:
+        utp->nb_half_cycle = _val;
+        break;
+    case 6:
+        utp->polarity = _val;
+        break;
+    case 7:
+        utp->id_mode = _val;
+        break;
+    case 8:
+        utp->duty_cycle = _val;
+        break;
+    case 9:
+        utp->id_pulse_type = _val;
+        break;
+    case 10:
+        utp->voltage = _val;
+        break;
+    case 11:
+        prf = _val;
+        break;
+    case 12:
+        startline = _val;
+        return 12;
+    case 13:
+        stopline = _val;
+        return 13;
+    default:
+        break;
+    }
+    return 0;
+}
+
+int APnIGuiAdapter::storeUtpItem2DB(QString utp_json) {
+    const int json_str_min_len = 10;
+    if (utp_json.length() < json_str_min_len) {
+        return -1;
+    }
+    const std::string rawJson = utp_json.toStdString();
+    const auto rawJsonLength = static_cast<int>(rawJson.length());
+
+    JSONCPP_STRING err;
+    Json::Value root;
+    Json::CharReaderBuilder builder;
+    const std::unique_ptr<Json::CharReader> reader(builder.newCharReader());
+    if (!reader->parse(rawJson.c_str(), rawJson.c_str() + rawJsonLength, &root, &err)) {
+        qDebug() << "json parse error!";
+        return -2;
+    }
+    const int utp_key_count = 14;
+
+    UTPs utp(true);
+    int start_line = 0, stop_line = 0, ret = -1;
+    for (int i = 1; i < utp_key_count; i++) {
+        const QString &keystr = UTPkeys[i];
+        float json_value = root.get(keystr.toStdString(), "-1").asFloat();
+        // qDebug() << "i=" << i << "], value=" << json_value;
+        ret = setValueByIndex(i, json_value, &utp);
+        switch (ret) {
+        case 12:
+            start_line = json_value;
+            break;
+        case 13:
+            stop_line = json_value;
+            break;
+        default:
+            break;
+        }
+    }
+    utp.transmit_lines = stop_line - start_line + 1;
+    APNI_DB_Adapter *ada = APNI_DB_Adapter::get_instance();
+    bool db_result = true;
+    if (ada) {
+        // TODO: return utp_id
+        db_result = ada->addUtpRow(utp);
+        if (!db_result) {
+            qDebug() << "add utp item to db error";
+            return -1;
+        }
+    }
+    return 0;
 }
 
 bool APnIGuiAdapter::connect2db() {

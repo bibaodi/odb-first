@@ -36,11 +36,11 @@
       </primary-key>
     </table>
     <table name="UTPs" kind="object">
-      <column name="id_utp" type="INTEGER" null="false" default="0"/>
+      <column name="id_utp" type="INTEGER" null="false"/>
       <column name="id_pulse_type" type="INTEGER" null="false" default="0"/>
       <column name="id_probe" type="INTEGER" null="false" default="-1"/>
-      <column name="id_mode" type="INTEGER" null="true" default="0"/>
-      <column name="id_apodization" type="INTEGER" null="false" default="0"/>
+      <column name="id_mode" type="INTEGER" null="true"/>
+      <column name="id_apodization" type="INTEGER" null="false"/>
       <column name="id_mtp" type="INTEGER" null="false" default="-1"/>
       <column name="location" type="INTEGER" null="false" default="0"/>
       <column name="nb_element" type="INTEGER" null="false" default="0"/>
@@ -98,7 +98,7 @@
     </table>
     <table name="MTPs" kind="object">
       <column name="id_mtp" type="INTEGER" null="false"/>
-      <column name="id_utp" type="INTEGER" null="false" default="0"/>
+      <column name="id_utp" type="INTEGER" null="false"/>
       <column name="mi" type="REAL" null="true" default="0"/>
       <column name="mi_inv" type="REAL" null="true" default="0"/>
       <column name="pii_0_u" type="REAL" null="true" default="0"/>

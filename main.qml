@@ -362,29 +362,32 @@ Window {
             document.saveAs(`file:${log_file}`)
         }
     }
-
+    function packageUtp2Json() {
+        var utpobj = JsonObj.getJsonobj()
+        utpobj.ProbeName = id_probename_item.text
+        utpobj.Location = id_location_item.get_value()
+        utpobj.NB_ele = id_nb_ele_item.get_value()
+        utpobj.id_apod = id_id_apod_item.get_value()
+        utpobj.freq = id_freq_item.get_value()
+        utpobj.Nb_half_cycle = id_nb_ele_item.get_value()
+        utpobj.polarity = id_polarity_item.get_value()
+        utpobj.id_mode = id_id_mode_item.get_value()
+        utpobj.duty_cycle = id_duty_cycle_item.get_value()
+        utpobj.id_pulse_type = id_id_pulse_type_item.get_value()
+        utpobj.voltage = id_voltage_item.get_value()
+        utpobj.PRF = id_prf_item.get_value()
+        utpobj.startLine = id_startline_item.get_value()
+        utpobj.stopLine = id_startline_item.get_value()
+        JsonObj.printUtpJsonObj(utpobj)
+        //end collect params to json.
+        var params = JSON.stringify(utpobj)
+        return params
+    }
     Connections {
         target: id_button_start
         function onClicked() {
             console.log("starting...push")
-            var utpobj = JsonObj.getJsonobj()
-            utpobj.ProbeName = id_probename_item.text
-            utpobj.Location = id_location_item.get_value()
-            utpobj.NB_ele = id_nb_ele_item.get_value()
-            utpobj.id_apod = id_id_apod_item.get_value()
-            utpobj.freq = id_freq_item.get_value()
-            utpobj.Nb_half_cycle = id_nb_ele_item.get_value()
-            utpobj.polarity = id_polarity_item.get_value()
-            utpobj.id_mode = id_id_mode_item.get_value()
-            utpobj.duty_cycle = id_duty_cycle_item.get_value()
-            utpobj.id_pulse_type = id_id_pulse_type_item.get_value()
-            utpobj.voltage = id_voltage_item.get_value()
-            utpobj.PRF = id_prf_item.get_value()
-            utpobj.startLine = id_startline_item.get_value()
-            utpobj.stopLine = id_startline_item.get_value()
-            JsonObj.printUtpJsonObj(utpobj)
-            //end collect params to json.
-            var params = JSON.stringify(utpobj)
+            var params = packageUtp2Json()
             id_logItem.add_log(`start push: param=${params}`)
             var ret = id_dbus_client.run_cmd(params, "utp-start")
             id_logItem.add_log(`running result: ${ret}`)
@@ -404,6 +407,9 @@ Window {
         target: id_button_addutp
         function onClicked() {
             console.log("id_button_addutp")
+            var utpjson = packageUtp2Json()
+            var ret = id_apni_adapter.storeUtpItem2DB(utpjson)
+            console.log(`store utp to database, result=${ret}`)
         }
     }
     Connections {

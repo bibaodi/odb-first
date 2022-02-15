@@ -97,16 +97,16 @@ class UTPs {
     members(location, nb_element, id_probe, id_apodization, freq, nb_half_cycle, polarity, transmit_lines, delta,      \
             composed_mode, duty_cycle, nb_element_max, voltage, id_pulse_type)
 #pragma db index("utp_id_mtp_idx") method("BTREE") member(id_mtp, "DESC")
-    int id_utp;
+    unsigned int id_utp;
 #pragma db default(0)
-    int id_pulse_type;
+    unsigned int id_pulse_type;
 #pragma db default(-1)
-    int id_probe;
+    unsigned int id_probe;
 #pragma db null
-    int id_mode;
-    int id_apodization;
+    unsigned int id_mode;
+    unsigned int id_apodization;
 #pragma db default(-1)
-    int id_mtp;
+    unsigned int id_mtp;
     int location;
     int nb_element;
 #pragma db not_null
@@ -133,7 +133,7 @@ class UTPs {
 struct UTPInfos {
   public:
 #pragma db id
-    int id_utp;
+    unsigned int id_utp;
 #pragma db not_null
     double framerate_multiplier;
     double framerate_multiplier_m;
@@ -157,8 +157,8 @@ struct UTPInfos {
 class MTPs {
   public:
 #pragma db id
-    int id_mtp;
-    int id_utp;
+    unsigned int id_mtp;
+    unsigned int id_utp;
     double mi;
     double mi_inv;
     double pii_0_u;
